@@ -75,7 +75,7 @@
         <div class="stat"><div class="v" id="pts">...</div><div class="l">⭐ Ochko</div></div>
       </div>
       <div class="btn-row">
-        <button class="btn" onclick="claimDaily()">🎁 Kunlik +100</button>
+        <button class="btn" onclick="claimDaily()">🎁 Kunlik +1000</button>
         <button class="btn" onclick="invite()">👥 Do'st taklif +100</button>
       </div>
     </div>
@@ -149,7 +149,7 @@
   if (tg) { tg.ready(); tg.expand(); }
 
   let myBal = 0;
-  const cfg = {mode:'bot', stake:10, deck:36, players:2};
+  const cfg = {mode:'bot', stake:100, deck:36, players:2};
 
   function showToast(msg){
     const t = document.getElementById('toast');
@@ -248,7 +248,7 @@
   }
 
   function renderSetup(){
-    makeChips('ch-stake', [10,50,100,500], 'stake');
+    makeChips('ch-stake', [100,1000,10000,50000,100000], 'stake', function(v){ return fmt(v); });
     makeChips('ch-deck', [24,36,54], 'deck', function(v){ return v + ' talik'; });
     makeChips('ch-players', [2,3,4,5,6], 'players');
     const pot = cfg.stake * cfg.players;
@@ -276,4 +276,4 @@
   loadMe();
 </script>
 </body>
-  </html>
+      </html>
