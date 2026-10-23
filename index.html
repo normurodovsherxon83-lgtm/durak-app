@@ -20,6 +20,8 @@
   .cta-wrap{padding:8px 24px 0;}
   .cta{width:100%;background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#2b2205;border:none;border-radius:14px;padding:18px;font-size:17px;font-weight:700;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 0 #8a6f16,0 10px 18px rgba(0,0,0,0.35);cursor:pointer;}
   .cta:active{transform:translateY(4px);box-shadow:0 2px 0 #8a6f16;}
+  .cta.friends{background:linear-gradient(180deg,#2d6a54,#1b4d3b);color:var(--cream);box-shadow:0 6px 0 #0a3324,0 10px 18px rgba(0,0,0,0.35);}
+  .cta.friends:active{box-shadow:0 2px 0 #0a3324;}
   .cta-sub{text-align:center;font-size:12px;color:var(--muted);margin-top:8px;}
   .box{margin:16px 24px 0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;}
   .stats{display:flex;gap:10px;}
@@ -81,6 +83,11 @@
     <div class="cta-wrap" style="margin-top:16px">
       <button class="cta" onclick="openSetup('online')"><span>🎮</span> O'yinga qo'shilish</button>
       <div class="cta-sub">Tasodifiy raqib yoki do'stni taklif qiling</div>
+    </div>
+
+    <div class="cta-wrap" style="margin-top:6px">
+      <button class="cta friends" onclick="location.href='online.html'"><span>👥</span> Do'stlar bilan</button>
+      <div class="cta-sub">Stol yarating va kodni do'stingizga yuboring</div>
     </div>
 
     <div class="box">
@@ -268,4 +275,4 @@
   loadMe();
 </script>
 </body>
-  </html>
+                                                             </html>
