@@ -18,7 +18,7 @@ body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;padding:12px}
 <div class="tabs" id="tabs"></div><div class="g" id="g"></div>
 <script>
 const API="https://durak-bot-0stf.onrender.com/api/shop/",tg=Telegram.WebApp;
-tg.ready();tg.expand();
+tg.ready();tg.expand();tg.BackButton.show();tg.BackButton.onClick(()=>{location.href="index.html"});
 let D,tab="pack";
 const T={pack:"💰 Pul",av:"🧑 Avatar",bg:"🖼 Fon",chest:"🎁 Sandiq"};
 async function post(p,x={}){
