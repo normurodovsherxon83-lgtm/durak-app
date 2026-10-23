@@ -1,508 +1,116 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Durak — o'yin</title>
+<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Durak</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  :root{
-    --felt-deep:#081c15; --felt:#0e2e22; --felt-light:#123d2c;
-    --gold:#c9a227; --gold-bright:#e6c34a; --red:#b3242a;
-    --cream:#f8f4e8; --muted:#8fa79a; --card-bg:#102a20; --border:rgba(201,162,39,0.28);
-  }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
-  body{
-    font-family:'Segoe UI',Inter,sans-serif;
-    background:radial-gradient(ellipse at top, var(--felt-light) 0%, var(--felt) 45%, var(--felt-deep) 100%);
-    color:var(--cream); min-height:100vh; padding:6px; padding-bottom:112px; overflow-x:hidden;
-  }
-  h1{font-size:19px; text-align:center; margin-bottom:4px; color:var(--gold-bright); letter-spacing:1px;}
-
-  /* ---- Setup screen ---- */
-  .setup{max-width:440px;margin:24px auto 0;text-align:center;}
-  .fan{position:relative;height:110px;margin-bottom:6px;}
-  .fan .fc{
-    position:absolute; top:0; left:50%; width:56px; height:80px; border-radius:8px;
-    background:var(--cream); border:1px solid #0004; box-shadow:0 6px 14px rgba(0,0,0,.4);
-    display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:700;
-    transform-origin:bottom center;
-  }
-  .setup p{color:var(--muted);margin:10px 0 18px;font-size:13px;}
-  .divider{display:flex;align-items:center;gap:10px;color:var(--gold);opacity:.5;margin:0 auto 16px;max-width:220px;}
-  .divider hr{flex:1;border:none;border-top:1px solid var(--gold);}
-  .count-row{display:flex;gap:10px;justify-content:center;margin-bottom:26px;flex-wrap:wrap;}
-  .count-btn{
-    width:54px;height:54px;border-radius:50%;border:2px solid var(--border);
-    background:var(--card-bg);color:var(--cream);font-size:19px;font-weight:700;
-    box-shadow:0 3px 0 rgba(0,0,0,.3);
-  }
-  .bet-btn{
-    min-width:68px;height:44px;border-radius:10px;border:2px solid var(--border);
-    background:var(--card-bg);color:var(--cream);font-size:13px;font-weight:700;
-    box-shadow:0 3px 0 rgba(0,0,0,.3);padding:0 10px;
-  }
-  .bet-btn.sel{border-color:var(--gold-bright);background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#2b2205;}
-  .count-btn.sel{border-color:var(--gold-bright);background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#2b2205;}
-  .start-btn{
-    background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#2b2205;
-    border:none;border-radius:14px;padding:16px 36px;font-size:16px;font-weight:700;
-    box-shadow:0 5px 0 #8a6f16,0 10px 18px rgba(0,0,0,.35);
-  }
-
-  /* ---- Game screen ---- */
-  .topbar{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-bottom:6px;}
-  .trump-badge{background:var(--card-bg);border:1px solid var(--border);padding:5px 10px;border-radius:8px;font-size:13px;font-weight:700;}
-  .opponents{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
-  .opp{
-    background:var(--card-bg);border:1px solid var(--border);border-radius:8px;
-    padding:4px 8px;text-align:center;font-size:10.5px;min-width:52px;
-  }
-  .opp.active{border-color:var(--gold-bright);box-shadow:0 0 0 1px var(--gold-bright) inset;}
-  .opp .name{font-weight:700;margin-bottom:1px;}
-  .opp .role{font-size:9px;color:var(--gold);}
-
-  .table{
-    position:relative; min-height:calc(100vh - 330px); background:var(--felt-light);
-    border:2px solid var(--border); border-radius:16px; display:flex; justify-content:center;
-    align-items:center; gap:10px; flex-wrap:wrap; align-content:center; padding:16px;
-    margin-bottom:6px; overflow:hidden;
-    background-image:
-      repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0 2px, transparent 2px 14px),
-      radial-gradient(ellipse at center, rgba(255,255,255,0.03), transparent 70%);
-  }
-  .table::before, .table::after{
-    content:''; position:absolute; inset:6px; border:1px solid rgba(201,162,39,0.18);
-    border-radius:11px; pointer-events:none;
-  }
-  .watermark{position:absolute;font-size:46px;opacity:.06;pointer-events:none;color:var(--gold-bright);}
-  .wm1{top:2px;left:8px;} .wm2{top:2px;right:8px;transform:scaleX(-1);}
-  .wm3{bottom:2px;left:8px;transform:scaleY(-1);} .wm4{bottom:2px;right:8px;transform:scale(-1,-1);}
-
-  .pair{position:relative;width:54px;height:78px;}
-  .status{text-align:center;font-size:12px;color:var(--gold-bright);margin-bottom:5px;min-height:16px;font-weight:600;}
-
-  /* ---- Classic playing card ---- */
-  .card, .pcard{
-    position:relative; border-radius:7px; background:var(--cream);
-    box-shadow:0 3px 6px rgba(0,0,0,.35), inset 0 0 0 1px rgba(0,0,0,.06);
-    border:2px solid transparent; touch-action:none;
-  }
-  .card{width:58px;height:84px;cursor:grab;flex-shrink:0;}
-  .pcard{width:54px;height:78px;position:absolute;top:0;left:0;}
-  .pcard.defend{top:13px;left:13px;box-shadow:-3px 4px 8px rgba(0,0,0,.45);}
-  .card.eligible{border-color:var(--gold-bright);box-shadow:0 3px 6px rgba(0,0,0,.35), 0 0 0 2px rgba(230,195,74,.35);}
-  .card.dragging{z-index:80;cursor:grabbing;}
-  .corner{position:absolute;font-size:11px;font-weight:700;line-height:1;display:flex;flex-direction:column;align-items:center;color:#111;}
-  .corner.red{color:var(--red);}
-  .corner.tl{top:3px;left:4px;}
-  .corner.br{bottom:3px;right:4px;transform:rotate(180deg);}
-  .pip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;color:#111;}
-  .pip.red{color:var(--red);}
-  .pcard .corner{font-size:9px;}
-  .pcard .pip{font-size:19px;}
-
-  .hand{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-bottom:6px;min-height:88px;}
-  .actions{position:fixed;bottom:0;left:0;right:0;background:rgba(8,28,21,0.97);
-    border-top:1px solid var(--border);padding:8px 12px 12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;}
-  .abtn{
-    background:var(--card-bg);border:1px solid var(--gold);color:var(--gold-bright);
-    padding:9px 16px;border-radius:9px;font-size:12.5px;font-weight:700;
-  }
-  .abtn.danger{border-color:var(--red);color:#ff9a9a;}
-  .hint{font-size:10.5px;color:var(--muted);}
-
-  .winner-screen{max-width:420px;margin:100px auto;text-align:center;}
-  .winner-screen h2{font-size:22px;color:var(--gold-bright);margin-bottom:14px;}
-</style>
-</head>
-<body>
-
-<div id="setup" class="setup">
-  <div class="fan" id="fan"></div>
-  <h1>DURAK · PEREVODNOY</h1>
-  <div class="divider"><hr><span>♠ ♥ ♦ ♣</span><hr></div>
-  <p>Nechta o'yinchi bilan sinab ko'ramiz?</p>
-  <div class="count-row" id="countRow"></div>
-  <p>Pul miqdorini tanlang (g'olib bo'lganlarga durakdan teng bo'linadi)</p>
-  <div class="count-row" id="betRow"></div>
-  <button class="start-btn" onclick="startGame()">Boshlash</button>
-</div>
-
-<div id="game" style="display:none;">
-  <div class="topbar">
-    <span id="deckInfo"></span>
-    <span class="trump-badge" id="trumpBadge"></span>
-  </div>
-  <div class="opponents" id="opponents"></div>
-  <div class="table" id="table"></div>
-  <div class="status" id="status"></div>
-  <div class="hand" id="hand"></div>
-  <div class="actions" id="actions"></div>
-</div>
-
-<div id="winnerScreen" class="winner-screen" style="display:none;">
-  <h2 id="winnerText"></h2>
-  <div id="payoutBox" style="margin-bottom:20px;"></div>
-  <button class="start-btn" onclick="location.reload()">Qayta boshlash</button>
-</div>
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:sans-serif;background:#0e2e22;color:#f2ecdd;min-height:100vh;padding:10px;max-width:480px;margin:0 auto}
+.top{display:flex;justify-content:space-between;font-size:13px;color:#8fa79a;margin-bottom:8px}
+.opps{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.opp{background:#123d2c;border:1px solid #c9a22744;border-radius:8px;padding:6px 10px;font-size:12px;text-align:center}
+.table{min-height:170px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:12px 0}
+.pair{position:relative;width:66px;height:86px}
+.card{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:50px;height:74px;background:#fff;color:#111;border-radius:7px;font-weight:700;font-size:17px;border:1px solid #999;line-height:1.2}
+.card.r{color:#c0212a}
+.pair .card{position:absolute;left:0;top:0}
+.pair .card.d{left:16px;top:12px;box-shadow:-2px 2px 4px #0006}
+.hand{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.bar{display:flex;gap:10px;margin-top:12px}
+button{flex:1;padding:14px;border:0;border-radius:10px;background:#e6c34a;font-weight:700;font-size:15px;color:#2b2205}
+.msg{text-align:center;font-size:14px;margin:6px 0;min-height:20px;color:#e6c34a}
+.ov{position:fixed;inset:0;background:#000c;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;font-size:20px;line-height:1.7}
+.ov button{flex:none;margin-top:16px;padding:14px 28px}
+</style></head><body>
+<div class="top"><span id="tr"></span><span id="st"></span></div>
+<div class="opps" id="opps"></div>
+<div class="table" id="tbl"></div>
+<div class="msg" id="msg"></div>
+<div class="hand" id="hand"></div>
+<div class="bar"><button id="bPass" onclick="passMe()" style="display:none">Bita ✅</button><button id="bTake" onclick="endRound(true)" style="display:none">Olaman ✋</button></div>
+<div class="ov" id="ov"></div>
 <script>
-const SUITS = ['S','H','D','C'];
-const SUIT_SYM = {S:'♠',H:'♥',D:'♦',C:'♣'};
-const RED_SUITS = ['H','D'];
-const RANKS = [6,7,8,9,10,11,12,13,14];
-const RANK_SYM = {11:'J',12:'Q',13:'K',14:'A'};
+const API="https://durak-bot-0stf.onrender.com";
+const tg=window.Telegram?Telegram.WebApp:null;if(tg){tg.ready();tg.expand();}
+const Q=new URLSearchParams(location.search);
+const stake=+Q.get('stake')||10,DK=+Q.get('deck')||36,N=Math.min(6,Math.max(2,+Q.get('players')||2));
+const RK=DK==24?[9,10,11,12,13,14]:DK==36?[6,7,8,9,10,11,12,13,14]:[2,3,4,5,6,7,8,9,10,11,12,13,14];
+const SU=['♠','♥','♦','♣'],LB={11:'J',12:'Q',13:'K',14:'A'};
+let deck=[],table=[],att=0,def=1,cap=6,passes=0,turn=0,over=false;
+for(let s=0;s<4;s++)for(const r of RK)deck.push({r,s});
+for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+const T=deck[0].s;
+const hands=Array.from({length:N},()=>[]);
+for(let k=0;k<6;k++)for(let i=0;i<N;i++)if(deck.length)hands[i].push(deck.pop());
+const val=c=>c.r+(c.s==T?20:0);
+const beats=(a,d)=>d.s==a.s?d.r>a.r:d.s==T;
+const nl=i=>{let k=i;do{k=(k+1)%N}while(!hands[k].length);return k};
+const AL=()=>{const L=[];for(let k=0;k<N;k++){const i=(att+k)%N;if(i!=def&&hands[i].length)L.push(i)}return L};
+const canAdd=c=>table.length<cap&&table.some(p=>p.a.r==c.r||(p.d&&p.d.r==c.r));
+const fmt=n=>Math.floor(n).toLocaleString('en-US').replace(/,/g,' ');
+const say=t=>{document.getElementById('msg').textContent=t};
+let m=99;hands.forEach((h,i)=>h.forEach(c=>{if(c.s==T&&c.r<m){m=c.r;att=i}}));
+def=nl(att);cap=Math.min(6,hands[def].length);
 
-function rankLabel(r){ return RANK_SYM[r] || r; }
-function isRed(c){ return RED_SUITS.includes(c.suit); }
-
-let G = {playerCount:2, bet:1000};
-
-function buildDeck(){
-  let d = [];
-  for(const s of SUITS) for(const r of RANKS) d.push({rank:r, suit:s});
-  for(let i=d.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [d[i],d[j]]=[d[j],d[i]]; }
-  return d;
-}
-
-// decorative fan of cards on setup screen
-(function buildFan(){
-  const fan = document.getElementById('fan');
-  const demo = [{r:'A',s:'♠',red:false},{r:'K',s:'♥',red:true},{r:'Q',s:'♦',red:true},{r:'J',s:'♣',red:false},{r:'10',s:'♠',red:false}];
-  const n = demo.length, spread=54;
-  demo.forEach((c,i)=>{
-    const el = document.createElement('div');
-    el.className='fc';
-    const angle = -spread/2 + (spread/(n-1))*i;
-    el.style.transform = 'translateX(-50%) rotate('+angle+'deg) translateY('+(Math.abs(i-(n-1)/2)*6)+'px)';
-    el.style.marginLeft = (i-(n-1)/2)*4+'px';
-    el.style.color = c.red ? '#b3242a' : '#111';
-    el.textContent = c.r+c.s;
-    fan.appendChild(el);
-  });
-})();
-
-function initCountRow(){
-  const row = document.getElementById('countRow');
-  row.innerHTML='';
-  [2,3,4,5].forEach(n=>{
-    const b = document.createElement('button');
-    b.className='count-btn'+(n===2?' sel':'');
-    b.textContent=n;
-    b.onclick=()=>{ document.querySelectorAll('.count-btn').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); G.playerCount=n; };
-    row.appendChild(b);
-  });
-}
-initCountRow();
-
-function fmt(n){ return n.toLocaleString('ru-RU').replace(/,/g,' '); }
-
-function initBetRow(){
-  const row = document.getElementById('betRow');
-  row.innerHTML='';
-  [1000,5000,20000,100000].forEach(v=>{
-    const b = document.createElement('button');
-    b.className='bet-btn'+(v===1000?' sel':'');
-    b.textContent='💰 '+fmt(v);
-    b.onclick=()=>{ document.querySelectorAll('.bet-btn').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); G.bet=v; };
-    row.appendChild(b);
-  });
-}
-initBetRow();
-
-function startGame(){
-  const n = G.playerCount;
-  const bet = G.bet;
-  const deck = buildDeck();
-  const trumpCard = deck[deck.length-1];
-  const players = [];
-  for(let i=0;i<n;i++) players.push({name:'O\'yinchi '+(i+1), hand:[], finished:false});
-  for(let i=0;i<6;i++) for(const p of players) if(deck.length) p.hand.push(deck.shift());
-
-  G = {
-    n, bet, deck, trumpSuit: trumpCard.suit, trumpCardShown: trumpCard,
-    players, table: [], attackerIndex: 0, defenderIndex: 1%n,
-    phase: 'attack', winnerText: ''
-  };
-  document.getElementById('setup').style.display='none';
-  document.getElementById('game').style.display='block';
-  render();
-}
-
-function beats(defCard, atkCard){
-  if(defCard.suit===atkCard.suit && defCard.rank>atkCard.rank) return true;
-  if(defCard.suit===G.trumpSuit && atkCard.suit!==G.trumpSuit) return true;
-  return false;
-}
-function unbeatenPairs(){ return G.table.filter(p=>!p.defend); }
-function tableRanks(){
-  const s = new Set();
-  G.table.forEach(p=>{ s.add(p.attack.rank); if(p.defend) s.add(p.defend.rank); });
-  return s;
-}
-function removeFromHand(player, card){
-  const i = player.hand.findIndex(c=>c.rank===card.rank && c.suit===card.suit);
-  if(i>=0) player.hand.splice(i,1);
-}
-
-function attackerPlay(card){
-  const atk = G.players[G.attackerIndex];
-  removeFromHand(atk, card);
-  G.table.push({attack:card, defend:null});
-  G.phase='defend';
-  render();
-}
-function defenderBeat(card){
-  const pair = unbeatenPairs()[0];
-  const def = G.players[G.defenderIndex];
-  removeFromHand(def, card);
-  pair.defend = card;
-  if(unbeatenPairs().length===0){ G.phase='attackerAdd'; }
-  render();
-}
-function canTranslate(){
-  if(G.table.length===0) return false;
-  if(G.table.some(p=>p.defend)) return false;
-  const rank = G.table[0].attack.rank;
-  const def = G.players[G.defenderIndex];
-  return def.hand.some(c=>c.rank===rank);
-}
-function defenderTranslate(card){
-  const def = G.players[G.defenderIndex];
-  removeFromHand(def, card);
-  G.table.push({attack:card, defend:null});
-  G.defenderIndex = (G.defenderIndex+1) % G.n;
-  if(G.defenderIndex === G.attackerIndex){ G.defenderIndex = (G.defenderIndex+1) % G.n; }
-  render();
-}
-function defenderTake(){
-  const def = G.players[G.defenderIndex];
-  G.table.forEach(p=>{ def.hand.push(p.attack); if(p.defend) def.hand.push(p.defend); });
-  G.table = [];
-  endRound(false);
-}
-function attackerAddCard(card){
-  const def = G.players[G.defenderIndex];
-  const atk = G.players[G.attackerIndex];
-  removeFromHand(atk, card);
-  G.table.push({attack:card, defend:null});
-  G.phase='defend';
-  render();
-}
-function attackerPass(){
-  G.table = [];
-  endRound(true);
-}
-function endRound(defended){
-  const oldAttacker = G.attackerIndex;
-  const oldDefender = G.defenderIndex;
-  let order = [];
-  for(let i=0;i<G.n;i++) order.push((oldAttacker+i)%G.n);
-  order = order.filter(i=>i!==oldDefender);
-  order.push(oldDefender);
-  order.forEach(i=>{
-    const p = G.players[i];
-    while(p.hand.length<6 && G.deck.length>0) p.hand.push(G.deck.shift());
-  });
-  if(G.deck.length===0){
-    G.players.forEach(p=>{ if(p.hand.length===0) p.finished=true; });
-  }
-  const active = G.players.filter(p=>!p.finished);
-  if(active.length<=1){
-    G.phase='over';
-    if(active.length===1){
-      const durak = active[0];
-      const winners = G.players.filter(p=>p!==durak);
-      const share = Math.floor(G.bet / winners.length);
-      G.payout = winners.map(w=>({name:w.name, amount:share}));
-      G.durakName = durak.name;
-      G.winnerText = durak.name+' — DURAK! 🃏';
-    } else {
-      G.winnerText = "O'yin durrez tugadi!";
-      G.payout = [];
-      G.durakName = null;
-    }
-    render();
-    return;
-  }
-  if(defended){ G.attackerIndex = oldDefender; }
-  else { G.attackerIndex = (oldDefender+1)%G.n; }
-  while(G.players[G.attackerIndex].finished) G.attackerIndex = (G.attackerIndex+1)%G.n;
-  G.defenderIndex = (G.attackerIndex+1)%G.n;
-  while(G.players[G.defenderIndex].finished) G.defenderIndex = (G.defenderIndex+1)%G.n;
-  G.phase='attack';
-  render();
-}
-
-/* ---- classic card rendering ---- */
-function buildCardInner(c){
-  const red = isRed(c);
-  const rl = rankLabel(c.rank);
-  const sym = SUIT_SYM[c.suit];
-  return '<span class="corner tl'+(red?' red':'')+'">'+rl+'<br>'+sym+'</span>'
-       + '<span class="pip'+(red?' red':'')+'">'+sym+'</span>'
-       + '<span class="corner br'+(red?' red':'')+'">'+rl+'<br>'+sym+'</span>';
-}
-function renderCardEl(c, cls){
-  const el = document.createElement('div');
-  el.className = (cls||'pcard');
-  el.innerHTML = buildCardInner(c);
-  return el;
-}
-
-/* ---- drag & tap handling ---- */
-function attachDrag(el, dropFn){
-  let startX=0,startY=0,dragging=false,moved=false,suppressClick=false;
-  const tableEl = document.getElementById('table');
-  el.addEventListener('pointerdown', e=>{
-    startX=e.clientX; startY=e.clientY; dragging=true; moved=false;
-    el.setPointerCapture(e.pointerId);
-    el.classList.add('dragging');
-  });
-  el.addEventListener('pointermove', e=>{
-    if(!dragging) return;
-    const dx=e.clientX-startX, dy=e.clientY-startY;
-    if(Math.abs(dx)>6||Math.abs(dy)>6) moved=true;
-    el.style.transform = 'translate('+dx+'px,'+dy+'px) scale(1.1)';
-  });
-  function endDrag(e){
-    if(!dragging) return;
-    dragging=false;
-    el.classList.remove('dragging');
-    const r = tableEl.getBoundingClientRect();
-    const px=e.clientX, py=e.clientY;
-    const overTable = px>=r.left && px<=r.right && py>=r.top && py<=r.bottom;
-    if(moved && overTable){
-      suppressClick=true;
-      const ok = dropFn();
-      if(!ok){ el.style.transition='transform .18s ease'; el.style.transform='none'; }
-    } else {
-      el.style.transition='transform .18s ease'; el.style.transform='none';
-    }
-  }
-  el.addEventListener('pointerup', endDrag);
-  el.addEventListener('pointercancel', ()=>{ el.style.transform='none'; dragging=false; });
-  el.addEventListener('click', ()=>{ if(suppressClick){ suppressClick=false; return; } if(!moved) dropFn(); });
-}
-
+const ch=c=>`<span class="card ${c.s==1||c.s==2?'r':''}">${LB[c.r]||c.r}<br>${SU[c.s]}</span>`;
 function render(){
-  if(G.phase==='over'){
-    document.getElementById('game').style.display='none';
-    document.getElementById('winnerScreen').style.display='block';
-    document.getElementById('winnerText').textContent = G.winnerText;
-    const box = document.getElementById('payoutBox');
-    box.innerHTML='';
-    if(G.payout && G.payout.length){
-      const title = document.createElement('div');
-      title.style.cssText='font-size:12px;color:var(--muted);margin-bottom:10px;';
-      title.textContent = G.durakName+' hisobidan 💰 '+fmt(G.bet)+' teng bo\'lindi:';
-      box.appendChild(title);
-      G.payout.forEach(p=>{
-        const row = document.createElement('div');
-        row.style.cssText='display:flex;justify-content:space-between;max-width:240px;margin:0 auto 6px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;';
-        row.innerHTML = '<span>'+p.name+'</span><span style="color:var(--gold-bright);font-weight:700;">+'+fmt(p.amount)+'</span>';
-        box.appendChild(row);
-      });
-      const durakRow = document.createElement('div');
-      durakRow.style.cssText='display:flex;justify-content:space-between;max-width:240px;margin:10px auto 0;background:var(--card-bg);border:1px solid var(--red);border-radius:8px;padding:8px 14px;font-size:13px;';
-      durakRow.innerHTML = '<span>'+G.durakName+'</span><span style="color:#ff9a9a;font-weight:700;">-'+fmt(G.bet)+'</span>';
-      box.appendChild(durakRow);
-    }
-    return;
-  }
-  document.getElementById('deckInfo').textContent = 'Kolodada: '+G.deck.length+' · 💰 '+fmt(G.bet);
-  const tb = document.getElementById('trumpBadge');
-  tb.textContent = 'Koz: '+SUIT_SYM[G.trumpSuit];
-  tb.style.color = RED_SUITS.includes(G.trumpSuit) ? '#e08a8a' : 'var(--gold-bright)';
-
-  const oppWrap = document.getElementById('opponents');
-  oppWrap.innerHTML='';
-  const actingIndex = (G.phase==='defend') ? G.defenderIndex : G.attackerIndex;
-  G.players.forEach((p, idx)=>{
-    const d = document.createElement('div');
-    d.className='opp'+(idx===actingIndex?' active':'');
-    let role = '';
-    if(idx===G.attackerIndex) role='Hujumchi';
-    if(idx===G.defenderIndex) role='Himoyachi';
-    d.innerHTML = '<div class="name">'+p.name+(p.finished?' ✅':'')+'</div><div class="role">'+role+'</div><div>'+p.hand.length+' karta</div>';
-    oppWrap.appendChild(d);
-  });
-
-  const tableEl = document.getElementById('table');
-  tableEl.innerHTML = '<span class="watermark wm1">♠</span><span class="watermark wm2">♥</span><span class="watermark wm3">♦</span><span class="watermark wm4">♣</span>';
-  if(G.table.length===0){
-    const msg = document.createElement('span');
-    msg.style.cssText='color:var(--muted);font-size:12.5px;position:relative;';
-    msg.textContent = "Stol bo'sh — kartani shu yerga torting";
-    tableEl.appendChild(msg);
-  } else {
-    G.table.forEach(pair=>{
-      const w = document.createElement('div'); w.className='pair';
-      const a = renderCardEl(pair.attack,'pcard'); w.appendChild(a);
-      if(pair.defend){ const dd = renderCardEl(pair.defend,'pcard defend'); w.appendChild(dd); }
-      tableEl.appendChild(w);
-    });
-  }
-
-  const statusEl = document.getElementById('status');
-  const attacker = G.players[G.attackerIndex];
-  const defender = G.players[G.defenderIndex];
-  if(G.phase==='attack') statusEl.textContent = attacker.name+" — hujum qiling (kartani torting)";
-  if(G.phase==='defend') statusEl.textContent = defender.name+' — himoya qiling yoki tarjima qiling';
-  if(G.phase==='attackerAdd') statusEl.textContent = attacker.name+' — yana tashlaysizmi yoki tugatasizmi?';
-
-  const handEl = document.getElementById('hand');
-  const actionsEl = document.getElementById('actions');
-  handEl.innerHTML=''; actionsEl.innerHTML='';
-
-  if(G.phase==='attack'){
-    attacker.hand.forEach(c=>{
-      const el = renderCardEl(c,'card eligible');
-      attachDrag(el, ()=>{ attackerPlay(c); return true; });
-      handEl.appendChild(el);
-    });
-  } else if(G.phase==='defend'){
-    const pair = unbeatenPairs()[0];
-    defender.hand.forEach(c=>{
-      const ok = beats(c, pair.attack);
-      const trOk = canTranslate() && c.rank===G.table[0].attack.rank;
-      const el = renderCardEl(c, 'card'+((ok||trOk)?' eligible':''));
-      attachDrag(el, ()=>{
-        if(ok){ defenderBeat(c); return true; }
-        if(trOk){ defenderTranslate(c); return true; }
-        return false;
-      });
-      handEl.appendChild(el);
-    });
-    const takeBtn = document.createElement('button');
-    takeBtn.className='abtn danger'; takeBtn.textContent="Ko'tarish";
-    takeBtn.onclick=defenderTake;
-    actionsEl.appendChild(takeBtn);
-    if(canTranslate()){
-      const hint = document.createElement('span');
-      hint.className='hint';
-      hint.textContent='Tarjima uchun mos kartani torting';
-      actionsEl.appendChild(hint);
-    }
-  } else if(G.phase==='attackerAdd'){
-    const ranks = tableRanks();
-    const def = G.players[G.defenderIndex];
-    attacker.hand.forEach(c=>{
-      const ok = ranks.has(c.rank) && G.table.length<6 && G.table.length<def.hand.length+1;
-      const el = renderCardEl(c, 'card'+(ok?' eligible':''));
-      attachDrag(el, ()=>{ if(ok){ attackerAddCard(c); return true; } return false; });
-      handEl.appendChild(el);
-    });
-    const passBtn = document.createElement('button');
-    passBtn.className='abtn'; passBtn.textContent='Bito';
-    passBtn.onclick=attackerPass;
-    actionsEl.appendChild(passBtn);
-    const takeBtn2 = document.createElement('button');
-    takeBtn2.className='abtn danger'; takeBtn2.textContent="Ko'tarish";
-    takeBtn2.onclick=defenderTake;
-    actionsEl.appendChild(takeBtn2);
-  }
+  const L=AL(),who=L.length?L[turn%L.length]:-1,und=table.some(p=>!p.d);
+  document.getElementById('tr').textContent='Kozir: '+SU[T]+' · Kolodada: '+deck.length;
+  document.getElementById('st').textContent='Stavka: '+stake;
+  document.getElementById('opps').innerHTML=hands.map((h,i)=>i?`<div class="opp">Bot ${i}<br>🃏 ${h.length}${i==def?' 🛡':i==att?' ⚔':''}</div>`:'').join('');
+  document.getElementById('tbl').innerHTML=table.map(p=>`<div class="pair">${ch(p.a)}${p.d?ch(p.d).replace('class="card','class="card d'):''}</div>`).join('');
+  hands[0].sort((a,b)=>val(a)-val(b));
+  document.getElementById('hand').innerHTML=hands[0].map((c,i)=>`<span onclick="tap(${i})">${ch(c)}</span>`).join('');
+  document.getElementById('bTake').style.display=(!over&&def==0&&und)?'block':'none';
+  document.getElementById('bPass').style.display=(!over&&def!=0&&!und&&table.length&&who==0)?'block':'none';
+  say(over?'':def==0?(und?'Himoya: karta bosing yoki «Olaman»':'Raqib o\'ylayapti...'):who==0?(table.length?'Karta qo\'shing yoki «Bita»':'Siz yurasiz: karta bosing'):'Bot o\'ylayapti...');
 }
-</script>
-</body>
-</html>
+function step(){
+  if(over)return;render();
+  const und=table.some(p=>!p.d);
+  if(und){if(def!=0)setTimeout(botDef,800);return;}
+  if(table.length&&(table.length>=cap||!hands[def].length))return endRound(false);
+  const L=AL();if(!L.length)return endRound(false);
+  if(table.length&&passes>=L.length)return endRound(false);
+  const who=L[turn%L.length];
+  if(who!=0)setTimeout(()=>botAtk(who),800);
+}
+function tap(i){
+  if(over)return;const c=hands[0][i];if(!c)return;
+  const u=table.find(p=>!p.d);
+  if(def==0){if(!u||!beats(u.a,c))return say('Bu karta urolmaydi');u.d=c;hands[0].splice(i,1);passes=0;turn=0;return step();}
+  const L=AL();if(u||L[turn%L.length]!=0)return;
+  if(table.length&&!canAdd(c))return say('Bu kartani tashlab bo\'lmaydi');
+  hands[0].splice(i,1);table.push({a:c,d:null});passes=0;turn=0;step();
+}
+function passMe(){passes++;turn++;step();}
+function botAtk(i){
+  const h=hands[i].slice().sort((a,b)=>val(a)-val(b));
+  const c=table.length?h.find(c=>canAdd(c)&&(c.s!=T||!deck.length)):h[0];
+  if(!c){passes++;turn++;return step();}
+  hands[i].splice(hands[i].indexOf(c),1);table.push({a:c,d:null});passes=0;turn=0;step();
+}
+function botDef(){
+  const u=table.find(p=>!p.d);if(!u)return step();
+  const o=hands[def].filter(c=>beats(u.a,c)).sort((a,b)=>val(a)-val(b))[0];
+  if(!o)return endRound(true);
+  u.d=o;hands[def].splice(hands[def].indexOf(o),1);passes=0;turn=0;step();
+}
+function endRound(took){
+  if(over)return;
+  if(took)table.forEach(p=>{hands[def].push(p.a);if(p.d)hands[def].push(p.d)});
+  const o=[];for(let k=0;k<N;k++){const i=(att+k)%N;if(i!=def)o.push(i)}o.push(def);
+  table=[];
+  for(const i of o)while(hands[i].length<6&&deck.length)hands[i].push(deck.pop());
+  const live=hands.map((h,i)=>i).filter(i=>hands[i].length);
+  if(!deck.length&&live.length<=1)return finish(live[0]);
+  att=took?nl(def):(hands[def].length?def:nl(def));
+  def=nl(att);cap=Math.min(6,hands[def].length);passes=0;turn=0;step();
+}
+function finish(d){
+  over=true;render();
+  const r=d===undefined?'draw':d===0?'lose':'win',sh=stake/(N-1);
+  const t=r=='win'?`🏆 Siz yutdingiz!<br>+${fmt(sh)} pul · +${fmt(sh/10)} ochko`:r=='lose'?`😔 Siz durak bo'ldingiz<br>−${fmt(stake)} pul`:'🤝 Durang';
+  const ov=document.getElementById('ov');
+  ov.innerHTML=t+`<button onclick="location.href='index.html'">Menyuga qaytish</button>`;ov.style.display='flex';
+  fetch(API+"/api/result",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg?tg.initData:"",result:r,stake:stake,players:N})}).catch(()=>{});
+}
+step();
+</script></body></html>
