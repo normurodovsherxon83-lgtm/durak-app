@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<title>Do'kon</title>
+<style>
+body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;padding:12px}
+.top{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:10px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{flex:1;padding:8px 2px;border:0;border-radius:8px;background:#1e293b;color:#fff}
+.tabs .on{background:#2563eb}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.c{background:#1e293b;border-radius:10px;padding:10px;text-align:center;border:1px solid #334155}
+.pv{height:50px;border-radius:8px;margin-bottom:6px;font-size:34px;line-height:50px}
+.c button{width:100%;padding:7px;border:0;border-radius:8px;background:#16a34a;color:#fff;margin-top:6px}
+.r-rare{border-color:#38bdf8}.r-legend{border-color:#fbbf24}
+</style></head><body>
+<div class="top"><span id="bal"></span><span id="pts"></span></div>
+<div class="tabs" id="tabs"></div><div class="g" id="g"></div>
+<script>
+const API="https://durak-bot-0stf.onrender.com/api/shop/",tg=Telegram.WebApp;
+tg.ready();tg.expand();
+let D,tab="pack";
+const T={pack:"💰 Pul",av:"🧑 Avatar",bg:"🖼 Fon",chest:"🎁 Sandiq"};
+async function post(p,x={}){
+  const r=await fetch(API+p,{method:"POST",headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({initData:tg.initData,...x})});return r.json()}
+const price=i=>i.c=="star"?"⭐"+i.p:i.p+" 💰";
+const card=(cls,pv,name,btn,fn)=>`<div class="c ${cls}">${pv}<div>${name}</div><button onclick="${fn}">${btn}</button></div>`;
+async function load(){D=await post("me");if(D.error)return tg.showAlert(D.error);draw()}
+function draw(){
+  document.getElementById("bal").textContent="💰 "+D.balance;
+  document.getElementById("pts").textContent="🏆 "+Math.floor(D.points);
+  document.getElementById("tabs").innerHTML=Object.keys(T).map(k=>
+    `<button class="${k==tab?"on":""}" onclick="tab='${k}';draw()">${T[k]}</button>`).join("");
+  let h="";
+  if(tab=="pack")h=D.packs.map(p=>card("",'<div class="pv">💰</div>',p.coins+" pul","⭐"+p.stars,`stars('${p.id}')`)).join("");
+  else if(tab=="chest")h=D.chests.map(c=>card("",`<div class="pv">${c.e}</div>`,c.n+" sandiq",price(c),c.c=="star"?`stars('${c.id}')`:`chest('${c.id}')`)).join("");
+  else h=D.items.filter(i=>i.t==tab).map(i=>{
+    const own=D.owned.includes(i.id),on=D[i.t=="av"?"avatar":"bg"]==i.id;
+    const pv=i.t=="av"?`<div class="pv">${i.v}</div>`:`<div class="pv" style="background:linear-gradient(135deg,${i.v})"></div>`;
+    return card("r-"+i.r,pv,i.n,own?(on?"✓ Tanlangan":"Tanlash"):price(i),
+      own?`equip('${i.id}')`:i.c=="star"?`stars('${i.id}')`:`buy('${i.id}')`)}).join("");
+  document.getElementById("g").innerHTML=h}
+async function act(p,id,ok){
+  const r=await post(p,{id});
+  if(r.error)return tg.showAlert(r.error);
+  if(ok)tg.showAlert(ok(r));load()}
+const buy=id=>act("buy",id,()=>"✅ Sotib olindi!");
+const equip=id=>act("equip",id);
+const chest=id=>act("chest",id,r=>"🎁 +"+r.coins+" pul"+(r.item?"\n🎉 "+r.item:""));
+async function stars(id){
+  const r=await post("invoice",{id});
+  if(r.error)return tg.showAlert(r.error);
+  tg.openInvoice(r.url,s=>{if(s=="paid")setTimeout(load,1500)})}
+load();
+</script></body></html>
