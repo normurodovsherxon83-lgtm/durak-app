@@ -2,24 +2,46 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:sans-serif;background:#0e2e22;color:#f2ecdd;min-height:100vh;padding:10px;max-width:480px;margin:0 auto}
-.top{display:flex;justify-content:space-between;font-size:13px;color:#8fa79a;margin-bottom:8px}
+body{font-family:sans-serif;background:radial-gradient(ellipse at top,#123d2c,#0e2e22 50%,#081c15);color:#f2ecdd;min-height:100vh;padding:10px;max-width:480px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;background:#123d2c;border:1px solid #c9a22744;border-radius:14px;padding:8px 12px;margin-bottom:10px}
+.koz{display:flex;gap:12px;align-items:center}
+.kb{background:#fff;color:#111;border:2px solid #e6c34a;border-radius:10px;padding:5px 14px;text-align:center;box-shadow:0 0 12px #e6c34a66}
+.kb.r{color:#c0212a}
+.kb small{display:block;font-size:9px;letter-spacing:1px;color:#555}
+.kb b{font-size:30px;line-height:1.1}
+.dk{display:flex;align-items:center;gap:10px}
+.pile{position:relative;width:56px;height:46px}
+.pk{position:absolute;left:18px;top:0;width:30px;height:42px;background:linear-gradient(135deg,#b3242a,#7a1519);border:1px solid #e6c34a;border-radius:5px;z-index:2}
+.tc{position:absolute;left:0;top:3px;width:30px;height:42px;background:#fff;color:#111;border-radius:5px;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;transform:rotate(-14deg);z-index:1}
+.tc.r{color:#c0212a}
+.cnt b{display:block;font-size:26px;line-height:1;color:#e6c34a}
+.cnt small{font-size:10px;color:#8fa79a}
+.stk{text-align:right}
+.stk small{display:block;font-size:9px;letter-spacing:1px;color:#8fa79a}
+.stk b{font-size:16px;color:#e6c34a}
 .opps{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
-.opp{background:#123d2c;border:1px solid #c9a22744;border-radius:8px;padding:6px 10px;font-size:12px;text-align:center}
-.table{min-height:170px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:12px 0}
-.pair{position:relative;width:66px;height:86px}
-.card{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:50px;height:74px;background:#fff;color:#111;border-radius:7px;font-weight:700;font-size:17px;border:1px solid #999;line-height:1.2}
+.opp{background:#123d2c;border:1px solid #c9a22744;border-radius:12px;padding:8px 10px;min-width:84px;text-align:center}
+.opp .av{font-size:26px;line-height:1}
+.opp .nm{font-size:12px;margin:3px 0}
+.opp .bk{display:flex;justify-content:center;height:22px;margin-top:2px}
+.opp .bk i{width:14px;height:22px;background:linear-gradient(135deg,#b3242a,#7a1519);border:1px solid #e6c34a;border-radius:3px;margin-left:-8px}
+.opp .bk i:first-child{margin-left:0}
+.opp .ct{font-size:11px;color:#8fa79a;margin-top:2px}
+.table{min-height:170px;display:flex;flex-wrap:wrap;gap:2px;justify-content:center;align-items:center;margin:12px 0}
+.pair{position:relative;width:68px;height:86px}
+.card{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:50px;height:74px;background:#fff;color:#111;border-radius:7px;font-weight:700;font-size:17px;border:1px solid #999;line-height:1.2;box-shadow:0 2px 4px #0005}
 .card.r{color:#c0212a}
 .pair .card{position:absolute;left:0;top:0}
 .pair .card.d{left:16px;top:12px;box-shadow:-2px 2px 4px #0006}
-.hand{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.hand{display:flex;flex-wrap:wrap;gap:0;justify-content:center;margin-top:8px}
+.hand span+span{margin-left:-12px}
 .bar{display:flex;gap:10px;margin-top:12px}
 button{flex:1;padding:14px;border:0;border-radius:10px;background:#e6c34a;font-weight:700;font-size:15px;color:#2b2205}
 .msg{text-align:center;font-size:14px;margin:6px 0;min-height:20px;color:#e6c34a}
 .ov{position:fixed;inset:0;background:#000c;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;font-size:20px;line-height:1.7}
 .ov button{flex:none;margin-top:16px;padding:14px 28px}
 </style></head><body>
-<div class="top"><span id="tr"></span><span id="st"></span></div>
+<div class="top"><div id="tr"></div><div id="st"></div></div>
 <div class="opps" id="opps"></div>
 <div class="table" id="tbl"></div>
 <div class="msg" id="msg"></div>
@@ -31,6 +53,7 @@ const API="https://durak-bot-0stf.onrender.com";
 const tg=window.Telegram?Telegram.WebApp:null;if(tg){tg.ready();tg.expand();}
 const Q=new URLSearchParams(location.search);
 const stake=+Q.get('stake')||10,DK=+Q.get('deck')||36,N=Math.min(6,Math.max(2,+Q.get('players')||2));
+const DELAY=1800;
 const RK=DK==24?[9,10,11,12,13,14]:DK==36?[6,7,8,9,10,11,12,13,14]:[2,3,4,5,6,7,8,9,10,11,12,13,14];
 const SU=['♠','♥','♦','♣'],LB={11:'J',12:'Q',13:'K',14:'A'};
 let deck=[],table=[],att=0,def=1,cap=6,passes=0,turn=0,over=false;
@@ -52,9 +75,10 @@ def=nl(att);cap=Math.min(6,hands[def].length);
 const ch=c=>`<span class="card ${c.s==1||c.s==2?'r':''}">${LB[c.r]||c.r}<br>${SU[c.s]}</span>`;
 function render(){
   const L=AL(),who=L.length?L[turn%L.length]:-1,und=table.some(p=>!p.d);
-  document.getElementById('tr').textContent='Kozir: '+SU[T]+' · Kolodada: '+deck.length;
-  document.getElementById('st').textContent='Stavka: '+stake;
-  document.getElementById('opps').innerHTML=hands.map((h,i)=>i?`<div class="opp">Bot ${i}<br>🃏 ${h.length}${i==def?' 🛡':i==att?' ⚔':''}</div>`:'').join('');
+  const red=T==1||T==2;
+  document.getElementById('tr').innerHTML=`<div class="koz"><div class="kb ${red?'r':''}"><small>KOZIR</small><b>${SU[T]}</b></div><div class="dk">${deck.length?`<div class="pile"><span class="tc ${red?'r':''}">${LB[deck[0].r]||deck[0].r}${SU[T]}</span><i class="pk"></i></div>`:''}<div class="cnt"><b>${deck.length}</b><small>${deck.length?'kolodada':'koloda tugadi'}</small></div></div></div>`;
+  document.getElementById('st').innerHTML=`<div class="stk"><small>STAVKA</small><b>💰 ${stake}</b></div>`;
+  document.getElementById('opps').innerHTML=hands.map((h,i)=>i?`<div class="opp"><div class="av">🤖</div><div class="nm">Bot ${i}${i==def?' 🛡':i==att?' ⚔':''}</div><div class="bk">${'<i></i>'.repeat(Math.min(h.length,8))}</div><div class="ct">${h.length} karta</div></div>`:'').join('');
   document.getElementById('tbl').innerHTML=table.map(p=>`<div class="pair">${ch(p.a)}${p.d?ch(p.d).replace('class="card','class="card d'):''}</div>`).join('');
   hands[0].sort((a,b)=>val(a)-val(b));
   document.getElementById('hand').innerHTML=hands[0].map((c,i)=>`<span onclick="tap(${i})">${ch(c)}</span>`).join('');
@@ -65,12 +89,12 @@ function render(){
 function step(){
   if(over)return;render();
   const und=table.some(p=>!p.d);
-  if(und){if(def!=0)setTimeout(botDef,800);return;}
+  if(und){if(def!=0)setTimeout(botDef,DELAY);return;}
   if(table.length&&(table.length>=cap||!hands[def].length))return endRound(false);
   const L=AL();if(!L.length)return endRound(false);
   if(table.length&&passes>=L.length)return endRound(false);
   const who=L[turn%L.length];
-  if(who!=0)setTimeout(()=>botAtk(who),800);
+  if(who!=0)setTimeout(()=>botAtk(who),DELAY);
 }
 function tap(i){
   if(over)return;const c=hands[0][i];if(!c)return;
