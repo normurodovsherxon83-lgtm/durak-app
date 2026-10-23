@@ -4,7 +4,8 @@
 <title>Do'kon</title>
 <style>
 body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;padding:12px}
-.top{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:10px}
+.top{display:flex;justify-content:space-between;align-items:center;font-weight:bold;margin-bottom:10px}
+.back{padding:6px 10px;border:0;border-radius:8px;background:#1e293b;color:#fff}
 .tabs{display:flex;gap:6px;margin-bottom:10px}
 .tabs button{flex:1;padding:8px 2px;border:0;border-radius:8px;background:#1e293b;color:#fff}
 .tabs .on{background:#2563eb}
@@ -14,7 +15,7 @@ body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;padding:12px}
 .c button{width:100%;padding:7px;border:0;border-radius:8px;background:#16a34a;color:#fff;margin-top:6px}
 .r-rare{border-color:#38bdf8}.r-legend{border-color:#fbbf24}
 </style></head><body>
-<div class="top"><span id="bal"></span><span id="pts"></span></div>
+<div class="top"><button class="back" onclick="location.href='index.html'">← Orqaga</button><span id="bal"></span><span id="pts"></span></div>
 <div class="tabs" id="tabs"></div><div class="g" id="g"></div>
 <script>
 const API="https://durak-bot-0stf.onrender.com/api/shop/",tg=Telegram.WebApp;
