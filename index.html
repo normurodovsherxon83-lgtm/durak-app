@@ -50,6 +50,12 @@
   .nav-item .ic{font-size:19px;line-height:1;}
   .toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--felt-light);border:1px solid var(--border);padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:90%;text-align:center;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .back{background:none;border:none;color:var(--gold-bright);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;margin:14px 24px 0;text-align:left;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{flex:1;min-width:60px;text-align:center;padding:11px 6px;border-radius:9px;background:var(--felt-light);border:1px solid var(--border);font-size:14px;font-weight:600;cursor:pointer;color:var(--cream);}
+  .chip.on{color:#2b2205;background:var(--gold-bright);}
+  .sum{font-size:13px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5;}
+  .sum b{color:var(--gold-bright);}
 </style>
 </head>
 <body>
@@ -73,17 +79,38 @@
     </div>
 
     <div class="cta-wrap" style="margin-top:16px">
-      <button class="cta" onclick="joinGame()"><span>🎮</span> O'yinga qo'shilish</button>
+      <button class="cta" onclick="openSetup('online')"><span>🎮</span> O'yinga qo'shilish</button>
       <div class="cta-sub">Tasodifiy raqib yoki do'stni taklif qiling</div>
     </div>
 
     <div class="box">
       <div class="title">🤖 Botlarga qarshi o'ynash</div>
       <div class="levels">
-        <div class="level-btn" onclick="showToast('Oson daraja — tez orada')">Oson<span class="stars">+ko'p pul</span></div>
+        <div class="level-btn" onclick="openSetup('bot')">Oson<span class="stars">+ko'p pul</span></div>
         <div class="level-btn locked" onclick="showToast('5-daraja yutib oching')">O'rta<span class="stars">🔒 5-daraja</span></div>
         <div class="level-btn locked" onclick="showToast('12-daraja yutib oching')">Qiyin<span class="stars">🔒 12-daraja</span></div>
       </div>
+    </div>
+  </div>
+
+  <div id="setup" class="hidden">
+    <button class="back" onclick="show('home')">← Orqaga</button>
+    <div class="box">
+      <div class="title" id="setup-title">Stol sozlamalari</div>
+
+      <div class="title" style="margin-top:6px;color:var(--muted);font-weight:500">💰 Stavka</div>
+      <div class="chips" id="ch-stake"></div>
+
+      <div class="title" style="margin-top:16px;color:var(--muted);font-weight:500">🃏 Karta soni</div>
+      <div class="chips" id="ch-deck"></div>
+
+      <div class="title" style="margin-top:16px;color:var(--muted);font-weight:500">👥 O'yinchilar soni</div>
+      <div class="chips" id="ch-players"></div>
+
+      <div class="sum" id="sum"></div>
+    </div>
+    <div class="cta-wrap" style="margin-top:16px">
+      <button class="cta" onclick="startTable()"><span>▶️</span> Boshlash</button>
     </div>
   </div>
 
@@ -113,6 +140,9 @@
   const tg = window.Telegram ? Telegram.WebApp : null;
   if (tg) { tg.ready(); tg.expand(); }
 
+  let myBal = 0;
+  const cfg = {mode:'bot', stake:10, deck:36, players:2};
+
   function showToast(msg){
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -139,6 +169,7 @@
   async function loadMe(){
     const r = await call("/api/me");
     if (r.ok){
+      myBal = Number(r.balance)||0;
       document.getElementById('bal').textContent = fmt(r.balance);
       document.getElementById('pts').textContent = fmt(r.points);
     } else {
@@ -151,7 +182,7 @@
   async function claimDaily(){
     const r = await call("/api/daily");
     showToast(r.message || r.error || "Xato");
-    if (r.ok) document.getElementById('bal').textContent = fmt(r.balance);
+    if (r.ok){ myBal = Number(r.balance)||0; document.getElementById('bal').textContent = fmt(r.balance); }
   }
 
   function invite(){
@@ -187,16 +218,51 @@
   }
 
   function show(name){
-    document.getElementById('home').classList.toggle('hidden', name!=='home');
-    document.getElementById('rating').classList.toggle('hidden', name!=='rating');
-    document.getElementById('nav-home').classList.toggle('active', name==='home');
+    ['home','setup','rating'].forEach(function(id){
+      document.getElementById(id).classList.toggle('hidden', id!==name);
+    });
+    document.getElementById('nav-home').classList.toggle('active', name==='home' || name==='setup');
     document.getElementById('nav-rating').classList.toggle('active', name==='rating');
     if (name==='rating') loadTop('points');
     if (name==='home') loadMe();
   }
 
-  function joinGame(){
-    showToast("O'yin qismi keyingi bosqichda ulanadi");
+  function makeChips(boxId, values, key, label){
+    const box = document.getElementById(boxId);
+    box.innerHTML = '';
+    values.forEach(function(v){
+      const c = document.createElement('div');
+      c.className = 'chip' + (cfg[key]===v ? ' on' : '');
+      c.textContent = label ? label(v) : v;
+      c.onclick = function(){ cfg[key] = v; renderSetup(); };
+      box.appendChild(c);
+    });
+  }
+
+  function renderSetup(){
+    makeChips('ch-stake', [10,50,100,500], 'stake');
+    makeChips('ch-deck', [24,36,54], 'deck', function(v){ return v + ' talik'; });
+    makeChips('ch-players', [2,3,4,5,6], 'players');
+    const pot = cfg.stake * cfg.players;
+    document.getElementById('sum').innerHTML =
+      "Stavka: <b>" + fmt(cfg.stake) + "</b> · Umumiy bank: <b>" + fmt(pot) + "</b><br>" +
+      "Balansingiz: <b>" + fmt(myBal) + "</b>";
+  }
+
+  function openSetup(mode){
+    cfg.mode = mode;
+    document.getElementById('setup-title').textContent =
+      mode==='bot' ? '🤖 Botlarga qarshi — sozlamalar' : '🎮 Onlayn stol — sozlamalar';
+    renderSetup();
+    show('setup');
+  }
+
+  function startTable(){
+    if (myBal < cfg.stake){
+      showToast("Balans yetmaydi. Kunlik bonus oling yoki stavkani kamaytiring");
+      return;
+    }
+    location.href = "game.html?mode=" + cfg.mode + "&stake=" + cfg.stake + "&deck=" + cfg.deck + "&players=" + cfg.players;
   }
 
   loadMe();
