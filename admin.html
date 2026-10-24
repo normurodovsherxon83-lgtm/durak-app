@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<title>Admin</title>
+<style>
+:root{--gold:#ffd95a;--cream:#fff7e0;--muted:#9bc2b0;--goldgrad:linear-gradient(135deg,#fff6c9 0%,#ffd95a 22%,#b07d10 48%,#ffe58a 72%,#a8740c 100%)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:sans-serif;color:var(--cream);min-height:100vh;padding:12px 10px 90px;background:radial-gradient(ellipse at 50% -10%,#24916a,rgba(36,145,106,0) 55%),linear-gradient(180deg,#0f3a2a,#06180f);background-attachment:fixed}
+.wrap{max-width:480px;margin:0 auto}
+h2{text-align:center;color:var(--gold);text-shadow:0 2px 0 #5a3d05;margin:6px 0 12px}
+h3{color:var(--gold);margin:14px 0 6px}
+.c{border-radius:16px;padding:12px;margin-bottom:12px;border:4px solid transparent;background:linear-gradient(180deg,#15573f,#082a1d) padding-box,var(--goldgrad) border-box;box-shadow:0 8px 14px rgba(0,0,0,.5)}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:8px 0 3px}
+input,select,textarea{width:100%;font-size:16px;padding:11px;border-radius:12px;color:var(--cream);border:2px solid #ffd95a;background:linear-gradient(180deg,#0a241a,#13422f);font-family:inherit}
+select option{color:#111}
+textarea{min-height:120px}
+button{width:100%;padding:13px 8px;margin-top:8px;border-radius:13px;font-size:15px;font-weight:800;font-family:inherit;color:#3a2a00;border:3px solid #fff3b0;background:linear-gradient(180deg,#fff08a,#ffc933 48%,#e09a0c 52%,#f6b81e);box-shadow:0 0 0 2px #6e4604,0 4px 0 #6e4604}
+button:active{transform:translateY(3px);box-shadow:0 0 0 2px #6e4604,0 1px 0 #6e4604}
+button.red{color:#fff;border-color:#ffb3b3;background:linear-gradient(180deg,#e04b4b,#a01818);box-shadow:0 0 0 2px #500,0 4px 0 #500}
+button.sec{color:var(--cream);border-color:#ffd95a;background:linear-gradient(180deg,#3fae86,#146141);box-shadow:0 0 0 2px #4a3204,0 4px 0 #07301f}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hd{display:flex;align-items:center;gap:10px;font-size:16px}
+.pv{width:46px;height:46px;border-radius:50%;border:3px solid #ffd95a;display:flex;align-items:center;justify-content:center;font-size:26px;background:#0a241a}
+.pv.bgp{border-radius:10px}
+.stat{text-align:center;padding:14px}
+.stat b{display:block;font-size:26px;color:var(--gold)}
+.stat small{color:var(--muted);font-weight:700}
+.tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:4px;padding:8px;background:#06180f;border-top:3px solid #ffd95a;z-index:10}
+.tabbar button{margin:0;padding:10px 2px;font-size:11px;border-radius:10px;color:var(--muted);border:2px solid rgba(255,217,90,.4);background:#0f3a2a;box-shadow:none}
+.tabbar button.on{color:#3a2a00;border-color:#fff3b0;background:linear-gradient(180deg,#fff08a,#e8a912)}
+.sub{display:flex;gap:6px;margin-bottom:12px}
+.sub button{margin:0;padding:10px 2px;font-size:13px;color:var(--muted);border:2px solid rgba(255,217,90,.4);background:#0f3a2a;box-shadow:none}
+.sub button.on{color:#3a2a00;border-color:#fff3b0;background:linear-gradient(180deg,#fff08a,#e8a912)}
+.chk{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.chk label{margin:0;display:flex;align-items:center;gap:5px;font-size:13px;color:var(--cream)}
+.chk input{width:auto}
+.pl{cursor:pointer}
+.pl b{color:var(--gold)}
+.small{font-size:12px;color:var(--muted)}
+#toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#0a241a;border:3px solid #ffd95a;padding:10px 18px;border-radius:14px;font-weight:800;z-index:99;display:none}
+</style></head><body>
+<div id="toast"></div>
+<div class="wrap" id="app"><h2>Yuklanmoqda...</h2></div>
+<div class="tabbar" id="tabbar" style="display:none"></div>
+
+<script>
+const API="https://durak-bot-0stf.onrender.com/api/admin/",tg=Telegram.WebApp;
+tg.ready();tg.expand();
+let D=null,tab="stat",sub="av",cur=null,found=[];
+const TABS={stat:"📊 Stat",cfg:"⚙️ Sozlama",shop:"🛒 Do'kon",pl:"👤 O'yinchi",bc:"📣 E'lon"};
+const RAR=["common","rare","epic","legend"];
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=n=>Math.floor(Number(n)||0).toLocaleString('en-US').replace(/,/g,' ');
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",2200)}
+async function post(p,x={}){
+  try{const r=await fetch(API+p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:tg.initData,...x})});return await r.json()}
+  catch(e){return{error:"Tarmoq xatosi"}}}
+async function load(keep){
+  const r=await post("state");
+  if(r.error){document.getElementById("app").innerHTML="<h2>"+esc(r.error)+"</h2>";return}
+  D=r;draw();
+}
+function opts(list,sel){return list.map(x=>`<option value="${x}"${x==sel?" selected":""}>${x}</option>`).join("")}
+function vals(el){const o={};el.querySelectorAll("[data-k]").forEach(i=>o[i.dataset.k]=i.value);return o}
+async function act(path,body,msg){
+  const r=await post(path,body);
+  if(r.error)return toast("❌ "+r.error);
+  toast(msg||"✅ Saqlandi");await load();return r}
+
+function draw(){
+  const tb=document.getElementById("tabbar");tb.style.display="flex";
+  tb.innerHTML=Object.keys(TABS).map(k=>`<button class="${k==tab?"on":""}" onclick="tab='${k}';draw()">${TABS[k]}</button>`).join("");
+  const a=document.getElementById("app");
+  a.innerHTML=({stat:vStat,cfg:vCfg,shop:vShop,pl:vPl,bc:vBc})[tab]();
+  window.scrollTo(0,0)}
+
+function vStat(){const s=D.stats;
+  return `<h2>📊 Statistika</h2>
+  <div class="two"><div class="c stat"><b>${fmt(s.players)}</b><small>O'yinchilar</small></div>
+  <div class="c stat"><b>${fmt(s.balance)}</b><small>Jami pul</small></div>
+  <div class="c stat"><b>${fmt(s.points)}</b><small>Jami ochko</small></div>
+  <div class="c stat"><b>${D.items.length}</b><small>Do'kondagi narsa</small></div></div>
+  <div class="small" style="text-align:center">Pul va ochko: birinchi 1000 o'yinchi bo'yicha</div>`}
+
+const CFGL={daily_bonus:"Kunlik bonus",referral_bonus:"Taklif bonusi",start_balance:"Boshlang'ich balans",min_stake:"Eng kam stavka",max_stake:"Eng ko'p stavka",points_div:"Ochko bo'luvchi (ulush ÷ shu son)"};
+function vCfg(){
+  return `<h2>⚙️ Sozlamalar</h2><div class="c" id="cfgbox">`+
+  Object.keys(CFGL).map(k=>`<label>${CFGL[k]}</label><input data-k="${k}" type="number" value="${D.config[k]}">`).join("")+
+  `<button onclick="saveCfg()">💾 Saqlash</button></div>
+  <div class="small">Bu sozlamalar bot kodiga ulangandan keyin ishlaydi.</div>`}
+async function saveCfg(){await act("config",{config:vals(document.getElementById("cfgbox"))})}
+
+function vShop(){
+  const S={av:"🧑 Avatar",bg:"🖼 Fon",pk:"⭐ Paket",ch:"🎁 Sandiq"};
+  let h=`<h2>🛒 Do'kon</h2><div class="sub">`+Object.keys(S).map(k=>`<button class="${k==sub?"on":""}" onclick="sub='${k}';draw()">${S[k]}</button>`).join("")+`</div>`;
+  if(sub=="av"||sub=="bg"){
+    const L=D.items.filter(i=>i.t==sub);
+    h+=L.map(i=>itemCard(i,false)).join("");
+    const n=L.length+1+10;
+    h+=`<h3>➕ Yangi</h3>`+itemCard({id:(sub=="av"?"a":"b")+n,t:sub,n:"",p:1000,c:"coin",r:"common",v:sub=="av"?"🙂":"#14532d,#22c55e"},true);
+  }else if(sub=="pk"){
+    h+=D.packs.map(p=>packCard(p,false)).join("")+`<h3>➕ Yangi paket</h3>`+packCard({id:"s"+(D.packs.length+100),stars:100,coins:100000},true);
+  }else{
+    h+=D.chests.map(c=>chestCard(c,false)).join("")+`<h3>➕ Yangi sandiq</h3>`+chestCard({id:"c_new"+(D.chests.length+1),n:"",e:"🎁",p:1000,rng:[100,1000],ch:.2,rar:["common"]},true);
+  }
+  return h}
+
+function itemCard(it,nw){
+  const pv=it.t=="av"?`<span class="pv">${esc(it.v)}</span>`:`<span class="pv bgp" style="background:linear-gradient(135deg,${esc(it.v)})"></span>`;
+  return `<div class="c" data-id="${esc(it.id)}" data-t="${it.t}">
+  <div class="hd">${pv}<b>${esc(it.n||"Yangi")}</b></div>
+  ${nw?`<label>ID (takrorlanmasin)</label><input data-k="id" value="${esc(it.id)}">`:""}
+  <label>Nomi</label><input data-k="n" value="${esc(it.n)}">
+  <div class="two"><div><label>Narx</label><input data-k="p" type="number" value="${it.p}"></div>
+  <div><label>Valyuta</label><select data-k="c">${opts(["coin","star"],it.c)}</select></div></div>
+  <label>Nodirlik</label><select data-k="r">${opts(RAR,it.r)}</select>
+  <label>${it.t=="av"?"Emoji":"Ranglar (masalan #14532d,#22c55e)"}</label><input data-k="v" value="${esc(it.v)}">
+  <div class="two"><button onclick="saveItem(this)">💾 Saqlash</button>${nw?"":`<button class="red" onclick="delItem(this)">🗑 O'chirish</button>`}</div></div>`}
+async function saveItem(b){const c=b.closest(".c"),o=vals(c);o.id=o.id||c.dataset.id;o.t=c.dataset.t;o.p=+o.p;await act("item",{item:o})}
+function delItem(b){const id=b.closest(".c").dataset.id;tg.showConfirm("O'chirilsinmi?",async ok=>{if(ok)await act("item_del",{id},"🗑 O'chirildi")})}
+
+function packCard(p,nw){
+  return `<div class="c" data-id="${esc(p.id)}">
+  ${nw?`<label>ID</label><input data-k="id" value="${esc(p.id)}">`:`<div class="hd"><b>⭐ ${p.stars} → ${fmt(p.coins)}</b></div>`}
+  <div class="two"><div><label>⭐ Stars narxi</label><input data-k="stars" type="number" value="${p.stars}"></div>
+  <div><label>Pul miqdori</label><input data-k="coins" type="number" value="${p.coins}"></div></div>
+  <div class="two"><button onclick="savePack(this)">💾 Saqlash</button>${nw?"":`<button class="red" onclick="delPack(this)">🗑 O'chirish</button>`}</div></div>`}
+async function savePack(b){const c=b.closest(".c"),o=vals(c);o.id=o.id||c.dataset.id;await act("pack",{pack:o})}
+function delPack(b){const id=b.closest(".c").dataset.id;tg.showConfirm("O'chirilsinmi?",async ok=>{if(ok)await act("pack_del",{id},"🗑 O'chirildi")})}
+
+function chestCard(c,nw){
+  return `<div class="c" data-id="${esc(c.id)}">
+  <div class="hd"><span class="pv">${esc(c.e)}</span><b>${esc(c.n||"Yangi")} ${c.c=="star"?"(⭐)":""}</b></div>
+  ${nw?`<label>ID (c_ bilan boshlansin)</label><input data-k="id" value="${esc(c.id)}">`:""}
+  <div class="two"><div><label>Nomi</label><input data-k="n" value="${esc(c.n)}"></div><div><label>Belgi</label><input data-k="e" value="${esc(c.e)}"></div></div>
+  <label>Narxi ${c.c=="star"?"(⭐)":"(tanga)"}</label><input data-k="p" type="number" value="${c.p}">
+  <div class="two"><div><label>Eng kam tanga</label><input data-k="lo" type="number" value="${c.rng[0]}"></div><div><label>Eng ko'p tanga</label><input data-k="hi" type="number" value="${c.rng[1]}"></div></div>
+  <label>Buyum tushish ehtimoli (%)</label><input data-k="ch" type="number" value="${Math.round(c.ch*100)}">
+  <label>Qaysi nodirlikdan tushadi</label><div class="chk" data-rar>${RAR.map(r=>`<label><input type="checkbox" value="${r}"${c.rar.includes(r)?" checked":""}>${r}</label>`).join("")}</div>
+  <div class="two"><button onclick="saveChest(this)">💾 Saqlash</button>${nw||c.id=="c_diamond"?"":`<button class="red" onclick="delChest(this)">🗑 O'chirish</button>`}</div></div>`}
+async function saveChest(b){const c=b.closest(".c"),o=vals(c);
+  const rar=[...c.querySelectorAll("[data-rar] input:checked")].map(i=>i.value);
+  await act("chest",{chest:{id:o.id||c.dataset.id,n:o.n,e:o.e,p:+o.p,rng:[+o.lo,+o.hi],ch:(+o.ch)/100,rar}})}
+function delChest(b){const id=b.closest(".c").dataset.id;tg.showConfirm("O'chirilsinmi?",async ok=>{if(ok)await act("chest_del",{id},"🗑 O'chirildi")})}
+
+function vPl(){
+  let h=`<h2>👤 O'yinchilar</h2><div class="c"><label>Ism yoki Telegram ID</label><input id="q" placeholder="Qidirish...">
+  <button onclick="findPl()">🔍 Qidirish</button></div>`;
+  if(cur) h+=plCard(cur);
+  else h+=found.map(p=>`<div class="c pl" onclick='openPl(${p.tg_id})'><b>${esc(p.name)}</b><div class="small">ID: ${p.tg_id} · 🪙 ${fmt(p.balance)} · 🏆 ${fmt(p.points)}</div></div>`).join("");
+  return h}
+async function findPl(){const r=await post("find",{q:document.getElementById("q").value});
+  if(r.error)return toast("❌ "+r.error);found=r.players;cur=null;draw()}
+function openPl(id){cur=found.find(p=>p.tg_id==id);draw()}
+function plCard(p){
+  const own=p.owned.map(id=>D.items.find(i=>i.id==id)).filter(Boolean);
+  return `<div class="c" id="plbox"><div class="hd"><b>${esc(p.name)}</b></div>
+  <div class="small">ID: ${p.tg_id}</div>
+  <div class="two"><div class="stat"><b>${fmt(p.balance)}</b><small>Balans</small></div><div class="stat"><b>${fmt(p.points)}</b><small>Ochko</small></div></div>
+  <label>Pul qo'shish / ayirish (masalan 5000 yoki -500)</label><input data-k="balance" type="number" value="0">
+  <label>Ochko qo'shish / ayirish</label><input data-k="points" type="number" value="0">
+  <label>Narsa berish</label><select data-k="give"><option value="">—</option>${D.items.filter(i=>!p.owned.includes(i.id)).map(i=>`<option value="${esc(i.id)}">${esc(i.n)} (${i.t=="av"?"avatar":"fon"})</option>`).join("")}</select>
+  <label>Narsani olib qo'yish</label><select data-k="take"><option value="">—</option>${own.map(i=>`<option value="${esc(i.id)}">${esc(i.n)}</option>`).join("")}</select>
+  <button onclick="applyPl(${p.tg_id})">✅ Qo'llash</button>
+  <button class="sec" onclick="cur=null;draw()">← Ro'yxatga</button></div>`}
+async function applyPl(id){
+  const o=vals(document.getElementById("plbox"));
+  const r=await post("player",{tg_id:id,...o});
+  if(r.error)return toast("❌ "+r.error);
+  toast("✅ Bajarildi");cur=r.player;found=found.map(p=>p.tg_id==id?r.player:p);draw()}
+
+function vBc(){return `<h2>📣 E'lon</h2><div class="c"><label>Hamma o'yinchilarga yuboriladigan xabar</label>
+  <textarea id="bt" placeholder="Matn..."></textarea><button onclick="sendBc()">📤 Yuborish</button></div>`}
+function sendBc(){const t=document.getElementById("bt").value.trim();if(!t)return toast("Matn yozing");
+  tg.showConfirm("Hamma o'yinchilarga yuborilsinmi?",async ok=>{if(!ok)return;
+    const r=await post("broadcast",{text:t});if(r.error)return toast("❌ "+r.error);toast("✅ Yuborilmoqda");document.getElementById("bt").value=""})}
+
+load();
+</script></body></html>
