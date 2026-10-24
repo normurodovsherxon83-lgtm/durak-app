@@ -6,21 +6,33 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0f3d2e;color:#fff;font-family:sans-serif;padding:12px}
-h2{margin:6px 0 12px}
+body{margin:0;background:radial-gradient(ellipse at top,#1b6b4a,#0f3d2e 55%,#081c15) center/cover fixed;color:#fff;font-family:sans-serif;padding:12px;min-height:100vh;perspective:900px}
+h2{margin:6px 0 12px;text-shadow:0 2px 0 #7a5a00}
 button,select,input{font-size:16px;padding:12px;border-radius:10px;border:0;margin:4px 0;width:100%}
-button{background:#f5b301;font-weight:bold}
-button.sec{background:#2d6a54;color:#fff}
-.box{background:#14573f;border-radius:12px;padding:12px;margin-bottom:12px}
-.code{font-size:34px;letter-spacing:6px;text-align:center;font-weight:bold}
+button{background:linear-gradient(#ffd84a,#e0a800);color:#2b2205;font-weight:bold;box-shadow:0 4px 0 #8a6200,0 6px 10px #0008}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 #8a6200}
+button.sec{background:linear-gradient(#3a8a6c,#1f5a45);color:#fff;box-shadow:0 4px 0 #0d3324,0 6px 10px #0008}
+.coin{display:inline-block;width:1em;height:1em;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3a0,#f5b301 45%,#a66a00);box-shadow:inset 0 -2px 3px #7a4a00,0 1px 3px #000a;vertical-align:-.15em}
+.box{background:linear-gradient(#17553b,#0d3324);border:3px solid #e6c34a;box-shadow:0 0 0 2px #7a5a00,0 8px 14px #000a,inset 0 0 12px #e6c34a33;border-radius:14px;padding:12px;margin-bottom:12px}
+.code{font-size:34px;letter-spacing:6px;text-align:center;font-weight:bold;color:#ffd84a;text-shadow:0 3px 0 #7a5a00}
 .row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.card{background:#fff;color:#111;border-radius:8px;padding:10px 8px;min-width:46px;text-align:center;font-weight:bold;font-size:18px}
-.card.sel{outline:3px solid #f5b301}
+.card{background:linear-gradient(160deg,#fff,#e9e4d4);color:#111;border-radius:8px;padding:10px 8px;min-width:46px;text-align:center;font-weight:bold;font-size:18px;box-shadow:0 4px 6px #0007,1px 1px 0 #bbb,2px 2px 0 #999;transition:transform .15s}
+.card.r{color:#c0212a}
+.card.sel{outline:3px solid #f5b301;transform:translateY(-8px)}
+#ghand .card:active{transform:translateY(-12px) scale(1.08)}
 .pair{display:flex;flex-direction:column;gap:2px}
 .pair .card:nth-child(2){margin-top:-18px;margin-left:14px;background:#e8f0ff}
-.small{opacity:.8;font-size:14px;text-align:center}
+.felt{position:relative}
+.felt:before{content:"";position:absolute;inset:6px;border-radius:50%;background:radial-gradient(ellipse,#2a8a5e,#13503a 70%);box-shadow:inset 0 0 30px #0008;transform:rotateX(35deg);z-index:0}
+.felt>*{position:relative;z-index:1}
+.small{opacity:.85;font-size:14px;text-align:center}
 .hide{display:none}
 #msg{color:#ffd1d1;text-align:center;min-height:20px}
+.pl{display:flex;align-items:center;gap:8px;margin:4px 0}
+.av{width:38px;height:38px;border-radius:50%;background:#0d3324;border:2px solid #e6c34a;display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+#mav{animation:fl 2.4s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-3px)}}
 </style></head><body>
 <div id="msg"></div>
 
@@ -28,13 +40,13 @@ button.sec{background:#2d6a54;color:#fff}
   <h2>👥 Do'stlar bilan o'ynash</h2>
   <div class="box">
     <select id="stake">
-      <option value="100" selected>💰 Stavka: 100</option>
-      <option value="500">💰 Stavka: 500</option>
-      <option value="1000">💰 Stavka: 1 000</option>
-      <option value="5000">💰 Stavka: 5 000</option>
-      <option value="10000">💰 Stavka: 10 000</option>
-      <option value="50000">💰 Stavka: 50 000</option>
-      <option value="100000">💰 Stavka: 100 000</option>
+      <option value="100" selected>Stavka: 100</option>
+      <option value="500">Stavka: 500</option>
+      <option value="1000">Stavka: 1 000</option>
+      <option value="5000">Stavka: 5 000</option>
+      <option value="10000">Stavka: 10 000</option>
+      <option value="50000">Stavka: 50 000</option>
+      <option value="100000">Stavka: 100 000</option>
     </select>
     <select id="size"><option value="24">24 talik</option><option value="36" selected>36 talik</option><option value="54">54 talik</option></select>
     <select id="maxp"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
@@ -62,7 +74,7 @@ button.sec{background:#2d6a54;color:#fff}
 
 <div id="game" class="hide">
   <div class="box small" id="ginfo"></div>
-  <div class="box"><div class="small">Stol</div><div class="row" id="gtable"></div></div>
+  <div class="box felt"><div class="small">Stol</div><div class="row" id="gtable"></div></div>
   <div class="box"><div class="small" id="gturn"></div><div class="row" id="ghand"></div></div>
   <div class="row">
     <button id="takebtn" class="sec hide" onclick="doAct('take')">🤚 Olaman</button>
@@ -75,12 +87,19 @@ button.sec{background:#2d6a54;color:#fff}
 <script>
 const tg = window.Telegram.WebApp; tg.ready(); tg.expand();
 const API = "https://durak-bot-0stf.onrender.com";
-let code = null, S = null, timer = null, target = null;
+let code = null, S = null, timer = null, target = null, myAv = "🙂";
+const COIN = '<i class="coin"></i>';
 
 function show(id){ ["menu","lobby","game"].forEach(x=>document.getElementById(x).classList.toggle("hide",x!==id)); }
 function msg(t){ document.getElementById("msg").textContent=t||""; if(t) setTimeout(()=>{document.getElementById("msg").textContent=""},3000); }
 function cs(c){ return Array.isArray(c)?c.join(""):String(c); }
+function red(c){ const s=cs(c); return s.indexOf("♥")>-1||s.indexOf("♦")>-1; }
 function fmt(n){ return Math.floor(n).toLocaleString('en-US').replace(/,/g,' '); }
+function avHtml(a){
+  if(typeof a==='string'&&(/^(https?:|data:)/.test(a)||/\.(png|jpe?g|gif|webp|svg)$/i.test(a))) return '<img src="'+a+'">';
+  if(typeof a==='string'&&a.trim().startsWith('<svg')) return a;
+  return a||"🙂";
+}
 
 async function call(path, extra){
   try{
@@ -89,6 +108,24 @@ async function call(path, extra){
     return await r.json();
   }catch(e){ return {ok:false,error:"Tarmoq xatosi"}; }
 }
+
+// Tanlangan avatar va fon
+async function loadMe(){
+  try{
+    const r = await call("/api/shop/me");
+    const me = r.me||r.player||r;
+    const L = r.items||r.catalog||r.shop||me.items||[];
+    const find = id => Array.isArray(L)?L.find(x=>x&&x.id==id):(L&&L[id]);
+    let a = me.avatar, b = me.bg;
+    const ia = find(a); if(ia) a = ia.emoji||ia.icon||ia.img||ia.image||ia.svg||ia.name||a;
+    const ib = find(b); if(ib) b = ib.css||ib.bg||ib.color||ib.gradient||ib.style||ib.value||b;
+    if(typeof a==='string'&&a) myAv = a;
+    if(typeof b==='string'&&/^(#|rgb|hsl|linear|radial|conic|url)/.test(b))
+      document.body.style.background = b+(b.startsWith('url')?' center/cover fixed':'');
+    if(S) render();
+  }catch(e){}
+}
+loadMe();
 
 async function createTable(){
   const r = await call("/api/create",{stake:+stake.value,size:+size.value,max_players:+maxp.value});
@@ -137,30 +174,31 @@ function render(){
   if(S.status==="waiting"){
     show("lobby");
     lcode.textContent = S.code;
-    linfo.textContent = "Stavka: "+fmt(S.stake)+" | "+S.size+" talik | "+S.players.length+"/"+S.max_players;
-    lplayers.innerHTML = S.players.map((p,i)=>"👤 "+p.name+(i===0?" (egasi)":"")).join("<br>");
+    linfo.innerHTML = "Stavka: "+COIN+" "+fmt(S.stake)+" | "+S.size+" talik | "+S.players.length+"/"+S.max_players;
+    lplayers.innerHTML = S.players.map((p,i)=>'<div class="pl"><div class="av"'+(i===S.me?' id="mav"':'')+'>'+(i===S.me?avHtml(myAv):"👤")+'</div>'+p.name+(i===0?" (egasi)":"")+'</div>').join("");
     startbtn.classList.toggle("hide", !(S.me===0 && S.players.length>=2));
     return;
   }
   show("game");
   const me = S.me;
   const names = S.players.map((p,i)=>p.name+" ("+S.counts[i]+")").join(" · ");
-  ginfo.innerHTML = "Kozir: <b>"+cs(S.trump_card||S.trump)+"</b> | Kolodada: "+S.deck_count+"<br>"+names;
+  ginfo.innerHTML = '<div class="pl" style="justify-content:center"><div class="av" id="mav">'+avHtml(myAv)+'</div></div>'
+    +"Kozir: <b>"+cs(S.trump_card||S.trump)+"</b> | Kolodada: "+S.deck_count+"<br>"+names;
   const amDef = me===S.defender;
   gturn.textContent = S.status==="done" ? "O'yin tugadi"
     : amDef ? "Siz himoyadasiz" : (me===S.attacker ? "Siz hujumdasiz" : "Qo'shib tashlashingiz mumkin");
   gtable.innerHTML = "";
   (S.table||[]).forEach(pr=>{
     const d = document.createElement("div"); d.className="pair";
-    const a = document.createElement("div"); a.className="card"+(target&&cs(target)===cs(pr[0])?" sel":""); a.textContent=cs(pr[0]);
+    const a = document.createElement("div"); a.className="card"+(red(pr[0])?" r":"")+(target&&cs(target)===cs(pr[0])?" sel":""); a.textContent=cs(pr[0]);
     if(amDef && pr[1]==null) a.onclick=()=>{target=pr[0];render();};
     d.appendChild(a);
-    if(pr[1]!=null){ const b=document.createElement("div"); b.className="card"; b.textContent=cs(pr[1]); d.appendChild(b); }
+    if(pr[1]!=null){ const b=document.createElement("div"); b.className="card"+(red(pr[1])?" r":""); b.textContent=cs(pr[1]); d.appendChild(b); }
     gtable.appendChild(d);
   });
   ghand.innerHTML = "";
   (S.hand||[]).forEach(c=>{
-    const el = document.createElement("div"); el.className="card"; el.textContent=cs(c);
+    const el = document.createElement("div"); el.className="card"+(red(c)?" r":""); el.textContent=cs(c);
     el.onclick=()=>{
       if(S.status!=="playing") return;
       if(amDef){
