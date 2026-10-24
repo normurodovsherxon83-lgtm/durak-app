@@ -29,8 +29,8 @@ body{font-family:sans-serif;background:radial-gradient(ellipse at top,#1b6b4a,#0
 .opp .bk i{width:14px;height:22px;background:linear-gradient(135deg,#d3343a,#7a1519);border:1px solid #e6c34a;border-radius:3px;margin-left:-8px;box-shadow:1px 2px 3px #0008}
 .opp .bk i:first-child{margin-left:0}
 .opp .ct{font-size:11px;color:#a9c4b6;margin-top:2px}
-.table{position:relative;min-height:190px;display:flex;flex-wrap:wrap;gap:2px;justify-content:center;align-items:center;margin:14px 0;transform-style:preserve-3d}
-.table:before{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(ellipse,#2a8a5e,#13503a 70%);border:4px solid #e6c34a;box-shadow:0 0 0 3px #7a5a00,0 18px 24px #000b,inset 0 0 30px #0008;transform:rotateX(40deg) scale(1.02);z-index:0}
+.table{position:relative;min-height:190px;display:flex;flex-wrap:wrap;gap:2px;justify-content:center;align-items:center;margin:14px 0;isolation:isolate}
+.table:before{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(ellipse,#2a8a5e,#13503a 70%);border:4px solid #e6c34a;box-shadow:0 0 0 3px #7a5a00,0 18px 24px #000b,inset 0 0 30px #0008;z-index:0}
 .pair{position:relative;width:68px;height:86px;z-index:1}
 .card{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:50px;height:74px;background:linear-gradient(160deg,#fff,#e9e4d4);color:#111;border-radius:7px;font-weight:700;font-size:17px;border:1px solid #888;line-height:1.2;box-shadow:0 4px 6px #0007,1px 1px 0 #bbb,2px 2px 0 #999}
 .card.r{color:#c0212a}
