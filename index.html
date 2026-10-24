@@ -6,86 +6,191 @@
 <title>Durak Online</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--felt-deep:#081c15;--felt:#0e2e22;--felt-light:#123d2c;--gold:#c9a227;--gold-bright:#e6c34a;--red:#b3242a;--cream:#f2ecdd;--muted:#8fa79a;--card-bg:#102a20;--border:rgba(201,162,39,0.28);}
-  *{box-sizing:border-box;margin:0;padding:0;}
-  html,body{height:100%;}
-  body{font-family:'Inter',sans-serif;background:radial-gradient(ellipse at top,var(--felt-light) 0%,var(--felt) 45%,var(--felt-deep) 100%);color:var(--cream);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
-  .app{max-width:480px;margin:0 auto;width:100%;min-height:100vh;display:flex;flex-direction:column;padding-bottom:78px;}
-  .hero{padding:30px 24px 14px;text-align:center;}
-  .brand{font-family:'Playfair Display',serif;font-weight:700;font-size:44px;letter-spacing:1px;line-height:1;}
-  .brand .accent{color:var(--red);}
+  :root{--felt-deep:#04140e;--felt:#0b2c20;--felt-light:#15573f;--gold:#c9a227;--gold-bright:#ffd95a;--red:#e0313a;--cream:#fff7e0;--muted:#9bc2b0;--border:rgba(255,217,90,0.38);
+    --goldgrad:linear-gradient(135deg,#fff6c9 0%,#ffd95a 22%,#b07d10 48%,#ffe58a 72%,#a8740c 100%);}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{min-height:100%;}
+  body{font-family:'Inter',sans-serif;color:var(--cream);min-height:100vh;overflow-x:hidden;
+    background:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><g fill='%23ffd95a' fill-opacity='0.09' font-size='28' font-family='Arial'><text x='10' y='36'>♠</text><text x='70' y='36' fill='%23ff6b6b'>♥</text><text x='40' y='96' fill='%23ff6b6b'>♦</text><text x='100' y='96'>♣</text></g></svg>"),
+      radial-gradient(ellipse at 50% -10%,#24916a 0%,rgba(36,145,106,0) 55%),
+      radial-gradient(ellipse at 50% 115%,#000 0%,rgba(0,0,0,0) 55%),
+      radial-gradient(circle at 0% 40%,rgba(255,217,90,0.14),rgba(255,217,90,0) 35%),
+      radial-gradient(circle at 100% 70%,rgba(224,49,58,0.16),rgba(224,49,58,0) 35%),
+      linear-gradient(180deg,#0f3a2a,#06180f);
+    background-attachment:fixed;}
+  body::after{content:"";position:fixed;inset:3px;border:7px double #ffd95a;border-radius:24px;pointer-events:none;z-index:50;
+    box-shadow:0 0 0 2px #5a3d05,inset 0 0 0 2px #5a3d05,inset 0 0 36px rgba(255,217,90,0.25),0 0 22px rgba(0,0,0,0.6);}
+  .deco{position:fixed;font-size:120px;opacity:0.05;color:#ffd95a;pointer-events:none;z-index:0;font-family:Arial;}
+  .d1{left:-22px;top:18%;transform:rotate(-14deg);}
+  .d2{right:-24px;top:42%;transform:rotate(12deg);color:#ff6b6b;}
+  .d3{left:-14px;bottom:16%;transform:rotate(10deg);color:#ff6b6b;}
+  .d4{right:-18px;bottom:6%;transform:rotate(-12deg);}
+
+  /* OLTIN TANGA */
+  .coin{display:inline-block;position:relative;width:1.2em;height:1.2em;border-radius:50%;vertical-align:-0.22em;flex:none;
+    background:radial-gradient(circle at 32% 26%,#fffbe0 0%,#ffe27a 26%,#e8a912 60%,#8a5a05 100%);
+    border:0.09em solid #b07d10;
+    box-shadow:inset 0 0 0 0.07em #ffd95a,inset 0 -0.14em 0.18em rgba(90,61,5,0.65),0 0.1em 0.2em rgba(0,0,0,0.55),0 0 0.5em rgba(255,217,90,0.5);
+    animation:coinglow 2.6s ease-in-out infinite;}
+  .coin::before{content:"D";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;
+    font-size:0.66em;color:#8a5a05;text-shadow:0 0.06em 0 #fff3b0;}
+  .coin::after{content:"";position:absolute;top:12%;left:18%;width:30%;height:18%;border-radius:50%;background:rgba(255,255,255,0.75);transform:rotate(-30deg);filter:blur(0.5px);}
+  @keyframes coinglow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25)}}
+
+  .app{position:relative;z-index:1;max-width:480px;margin:0 auto;width:100%;min-height:100vh;padding:14px 8px 104px;}
+
+  .hero{padding:22px 20px 6px;text-align:center;position:relative;}
+  .fan{height:96px;position:relative;margin-bottom:-4px;}
+  .pc{position:absolute;left:50%;top:6px;width:56px;height:80px;border-radius:9px;background:linear-gradient(160deg,#fff,#e9e2cc);
+    color:#111;font-weight:800;font-size:21px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;
+    border:2px solid #ffd95a;
+    box-shadow:0 10px 18px rgba(0,0,0,0.6),inset 0 0 0 2px rgba(0,0,0,0.08);transform-origin:50% 120%;animation:float 3.2s ease-in-out infinite;}
+  .pc.r{color:#c4161f;}
+  .pc.a{margin-left:-28px;transform:rotate(-26deg) translateX(-38px);}
+  .pc.b{margin-left:-28px;z-index:2;animation-delay:.4s;}
+  .pc.c{margin-left:-28px;transform:rotate(26deg) translateX(38px);animation-delay:.8s;}
+  @keyframes float{0%,100%{translate:0 0}50%{translate:0 -6px}}
+  .brand{font-family:'Playfair Display',serif;font-weight:900;font-size:48px;letter-spacing:2px;line-height:1;
+    background:linear-gradient(180deg,#fff6c9 0%,#ffd95a 45%,#b07d10 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 3px 0 #5a3d05) drop-shadow(0 8px 10px rgba(0,0,0,0.6));}
+  .brand .accent{-webkit-text-fill-color:var(--red);}
   .tagline{margin-top:8px;font-size:13px;color:var(--muted);}
-  .cta-wrap{padding:8px 24px 0;}
-  .cta{width:100%;background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#2b2205;border:none;border-radius:14px;padding:18px;font-size:17px;font-weight:700;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 0 #8a6f16,0 10px 18px rgba(0,0,0,0.35);cursor:pointer;}
-  .cta:active{transform:translateY(4px);box-shadow:0 2px 0 #8a6f16;}
-  .cta.friends{background:linear-gradient(180deg,#2d6a54,#1b4d3b);color:var(--cream);box-shadow:0 6px 0 #0a3324,0 10px 18px rgba(0,0,0,0.35);}
-  .cta.friends:active{box-shadow:0 2px 0 #0a3324;}
-  .cta-sub{text-align:center;font-size:12px;color:var(--muted);margin-top:8px;}
-  .box{margin:16px 24px 0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;}
+  .suits{margin-top:8px;font-size:18px;letter-spacing:10px;color:var(--gold-bright);text-shadow:0 0 12px rgba(255,217,90,0.6);}
+  .suits i{font-style:normal;color:#ff6b6b;}
+
+  .box{margin:20px 12px 0;position:relative;border:5px solid transparent;border-radius:20px;padding:16px 14px;
+    background:linear-gradient(180deg,#15573f,#082a1d) padding-box,var(--goldgrad) border-box;
+    box-shadow:0 0 0 2px #4a3204,0 12px 24px rgba(0,0,0,0.55),inset 0 0 26px rgba(255,217,90,0.12),inset 0 2px 0 rgba(255,255,255,0.2);}
+  .box::before{content:"";position:absolute;inset:3px;border:1.5px solid rgba(255,217,90,0.55);border-radius:14px;pointer-events:none;}
+  .box::after{content:"◆";position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:16px;line-height:1;color:#ff4f5a;
+    background:#082a1d;border:2px solid #ffd95a;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+    text-shadow:0 0 8px rgba(255,79,90,0.9);box-shadow:0 2px 0 #5a3d05;}
+  .title{font-size:14px;font-weight:700;margin-bottom:10px;}
   .stats{display:flex;gap:10px;}
-  .stat{flex:1;background:var(--felt-light);border-radius:10px;padding:10px;text-align:center;}
-  .stat .v{font-size:20px;font-weight:700;color:var(--gold-bright);}
-  .stat .l{font-size:11px;color:var(--muted);margin-top:2px;}
-  .btn-row{display:flex;gap:10px;margin-top:12px;}
-  .btn{flex:1;background:var(--felt-light);border:1px solid var(--border);color:var(--cream);border-radius:10px;padding:12px 6px;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;}
-  .btn:active{opacity:.7;}
-  .box .title{font-size:14px;font-weight:600;margin-bottom:10px;}
+  .stat{flex:1;border-radius:14px;padding:11px 8px;text-align:center;border:3px solid transparent;
+    background:linear-gradient(180deg,#0a241a,#13422f) padding-box,var(--goldgrad) border-box;
+    box-shadow:inset 0 3px 8px rgba(0,0,0,0.55),0 3px 0 #4a3204;}
+  .stat .v{font-size:22px;font-weight:800;color:var(--gold-bright);text-shadow:0 2px 0 #5a3d05,0 0 14px rgba(255,217,90,0.45);}
+  .stat .l{font-size:11px;color:var(--muted);margin-top:3px;}
+
+  .cta-wrap{padding:0 12px;}
+  .cta{position:relative;overflow:hidden;width:100%;border:4px solid #fff3b0;border-radius:20px;padding:17px;font-size:19px;font-weight:800;font-family:'Inter',sans-serif;
+    display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;color:#3a2a00;text-shadow:0 1px 0 rgba(255,255,255,0.5);
+    background:linear-gradient(180deg,#fff08a 0%,#ffc933 48%,#e09a0c 52%,#f6b81e 100%);
+    box-shadow:0 0 0 2px #6e4604,0 8px 0 #6e4604,0 16px 22px rgba(0,0,0,0.6),inset 0 2px 0 rgba(255,255,255,0.8);}
+  .cta:active{transform:translateY(6px);box-shadow:0 0 0 2px #6e4604,0 2px 0 #6e4604,0 6px 10px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.8);}
+  .cta::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,0.65),transparent);transform:skewX(-20deg);animation:shine 3.2s infinite;}
+  @keyframes shine{0%{left:-60%}60%,100%{left:130%}}
+  .cta.friends{color:var(--cream);text-shadow:0 2px 0 rgba(0,0,0,0.5);border-color:#ffd95a;
+    background:linear-gradient(180deg,#3fae86 0%,#1f7a56 48%,#146141 52%,#1b7a53 100%);
+    box-shadow:0 0 0 2px #4a3204,0 8px 0 #07301f,0 16px 22px rgba(0,0,0,0.6),inset 0 2px 0 rgba(255,255,255,0.45);}
+  .cta.friends:active{box-shadow:0 0 0 2px #4a3204,0 2px 0 #07301f,0 6px 10px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.45);}
+  .cta.friends::after{animation-delay:1.4s;}
+  .cta-sub{text-align:center;font-size:12px;color:var(--muted);margin:12px 0 16px;}
+
+  .btn-row{display:flex;gap:10px;margin-top:14px;}
+  .btn{flex:1;position:relative;color:var(--cream);border:3px solid #ffd95a;border-radius:14px;padding:12px 6px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;
+    background:linear-gradient(180deg,#2f8d68,#1a6a4a);text-shadow:0 1px 0 rgba(0,0,0,0.5);
+    box-shadow:0 0 0 2px #4a3204,0 5px 0 #07301f,0 9px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.35);}
+  .btn:active{transform:translateY(4px);box-shadow:0 0 0 2px #4a3204,0 1px 0 #07301f,inset 0 1px 0 rgba(255,255,255,0.35);}
+  .btn.gift{background:linear-gradient(180deg,#ff6b6b,#c4222c);box-shadow:0 0 0 2px #4a3204,0 5px 0 #5e0d12,0 9px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.4);}
+  .btn.gift:active{box-shadow:0 0 0 2px #4a3204,0 1px 0 #5e0d12,inset 0 1px 0 rgba(255,255,255,0.4);}
+  .badge{position:absolute;top:-13px;right:-6px;background:#ffd95a;color:#5a3d05;font-size:10px;font-weight:800;padding:2px 7px;border-radius:10px;border:2px solid #8a5a05;transform:rotate(6deg);}
+
   .levels{display:flex;gap:8px;}
-  .level-btn{flex:1;background:var(--felt-light);border:1px solid var(--border);border-radius:9px;padding:10px 6px;text-align:center;font-size:12px;font-weight:600;cursor:pointer;}
-  .level-btn.locked{color:var(--muted);opacity:.55;}
-  .level-btn .stars{display:block;font-size:10px;color:var(--gold);margin-top:3px;font-weight:400;}
+  .level-btn{flex:1;border-radius:14px;padding:12px 6px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;border:3px solid #ffd95a;
+    background:linear-gradient(180deg,#2f8d68,#1a6a4a);box-shadow:0 0 0 2px #4a3204,0 5px 0 #07301f,inset 0 1px 0 rgba(255,255,255,0.35);}
+  .level-btn:active{transform:translateY(4px);box-shadow:0 0 0 2px #4a3204,0 1px 0 #07301f;}
+  .level-btn.locked{background:linear-gradient(180deg,#3a4a43,#26332d);border-color:#8a8a7a;box-shadow:0 0 0 2px #1a1a14,0 5px 0 #111a16;color:var(--muted);}
+  .level-btn .stars{display:block;font-size:10px;color:var(--gold-bright);margin-top:4px;font-weight:600;}
+  .level-btn.locked .stars{color:var(--muted);}
+
+  .tiles{display:flex;gap:10px;margin:22px 12px 0;}
+  .tile{flex:1;position:relative;border-radius:18px;padding:18px 6px 12px;text-align:center;cursor:pointer;font-size:13px;font-weight:800;
+    border:4px solid #ffe58a;text-shadow:0 2px 0 rgba(0,0,0,0.45);}
+  .tile .big{display:block;font-size:34px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 4px 4px rgba(0,0,0,0.5));}
+  .tile:active{transform:translateY(5px);}
+  .tile.shop{background:linear-gradient(180deg,#ffb347,#e0710c);box-shadow:0 0 0 2px #4a3204,0 7px 0 #6e3604,0 12px 16px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.5);}
+  .tile.inv{background:linear-gradient(180deg,#8a7bff,#4a3bc4);box-shadow:0 0 0 2px #4a3204,0 7px 0 #1f1670,0 12px 16px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.45);}
+  .tile.top{background:linear-gradient(180deg,#ff6b8a,#c4224f);box-shadow:0 0 0 2px #4a3204,0 7px 0 #5e0d25,0 12px 16px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.45);}
+  .ribbon{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#ffd95a;color:#5a3d05;font-size:10px;font-weight:800;padding:2px 9px;border-radius:10px;border:2px solid #8a5a05;white-space:nowrap;text-shadow:none;}
+
+  .promo{margin:22px 12px 0;border-radius:18px;padding:15px;text-align:center;font-weight:800;font-size:14px;color:#3a2a00;border:4px solid #fff3b0;
+    background:linear-gradient(90deg,#ffd95a,#fff2a8,#ffd95a);box-shadow:0 0 0 2px #6e4604,0 7px 0 #6e4604,0 12px 16px rgba(0,0,0,0.5);text-shadow:0 1px 0 rgba(255,255,255,0.6);}
+  .promo small{display:block;font-size:11px;font-weight:600;margin-top:3px;opacity:.8;}
+
   .tabs{display:flex;gap:8px;margin-bottom:12px;}
-  .tab{flex:1;text-align:center;padding:10px;border-radius:9px;background:var(--felt-light);border:1px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);}
-  .tab.on{color:#2b2205;background:var(--gold-bright);}
-  .row{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid rgba(201,162,39,0.12);}
-  .row:last-child{border-bottom:none;}
-  .row .n{width:26px;text-align:center;font-weight:700;color:var(--gold);}
-  .row .nm{flex:1;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .row .sc{font-weight:700;color:var(--gold-bright);font-size:14px;}
+  .tab{flex:1;text-align:center;padding:11px;border-radius:13px;font-size:13px;font-weight:700;cursor:pointer;color:var(--muted);border:3px solid rgba(255,217,90,0.35);
+    background:linear-gradient(180deg,#0a241a,#13422f);box-shadow:inset 0 3px 6px rgba(0,0,0,0.5);}
+  .tab.on{color:#3a2a00;border-color:#fff3b0;background:linear-gradient(180deg,#fff08a,#e8a912);box-shadow:0 0 0 2px #6e4604,0 3px 0 #6e4604,inset 0 1px 0 rgba(255,255,255,0.7);}
+  .row{display:flex;align-items:center;gap:10px;padding:11px 8px;border-radius:13px;margin-bottom:7px;border:2px solid rgba(255,217,90,0.4);
+    background:linear-gradient(90deg,rgba(255,217,90,0.12),rgba(0,0,0,0.22));}
+  .row .n{width:30px;text-align:center;font-weight:800;color:var(--gold-bright);font-size:16px;}
+  .row .nm{flex:1;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .row .sc{font-weight:800;color:var(--gold-bright);font-size:14px;text-shadow:0 1px 0 #5a3d05;}
   .empty{text-align:center;color:var(--muted);font-size:13px;padding:14px;}
   .hidden{display:none;}
-  .bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:rgba(8,28,21,0.96);border-top:1px solid var(--border);display:flex;padding:10px 8px 14px;}
-  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);font-size:10px;cursor:pointer;}
-  .nav-item.active{color:var(--gold-bright);}
-  .nav-item .ic{font-size:19px;line-height:1;}
-  .toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--felt-light);border:1px solid var(--border);padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:90%;text-align:center;}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-  .back{background:none;border:none;color:var(--gold-bright);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;margin:14px 24px 0;text-align:left;}
+  .back{background:none;border:none;color:var(--gold-bright);font-size:15px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;margin:14px 20px 0;text-align:left;}
+
   .chips{display:flex;gap:8px;flex-wrap:wrap;}
-  .chip{flex:1;min-width:60px;text-align:center;padding:11px 6px;border-radius:9px;background:var(--felt-light);border:1px solid var(--border);font-size:14px;font-weight:600;cursor:pointer;color:var(--cream);}
-  .chip.on{color:#2b2205;background:var(--gold-bright);}
-  .sum{font-size:13px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5;}
+  .chip{flex:1;min-width:64px;text-align:center;padding:11px 6px;border-radius:13px;font-size:14px;font-weight:700;cursor:pointer;color:var(--cream);border:3px solid #ffd95a;
+    background:linear-gradient(180deg,#2f8d68,#1a6a4a);box-shadow:0 0 0 2px #4a3204,0 5px 0 #07301f,inset 0 1px 0 rgba(255,255,255,0.35);}
+  .chip:active{transform:translateY(4px);box-shadow:0 0 0 2px #4a3204,0 1px 0 #07301f;}
+  .chip.on{color:#3a2a00;border-color:#fff3b0;background:linear-gradient(180deg,#fff08a,#e8a912);box-shadow:0 0 0 2px #6e4604,0 5px 0 #6e4604,0 0 18px rgba(255,217,90,0.65),inset 0 1px 0 rgba(255,255,255,0.7);}
+  .sum{font-size:13px;color:var(--muted);text-align:center;margin-top:16px;line-height:1.8;}
   .sum b{color:var(--gold-bright);}
+  .sub{margin-top:18px;color:var(--muted);font-weight:600;font-size:13px;}
+
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;display:flex;padding:10px 12px 16px;z-index:60;
+    background:linear-gradient(180deg,rgba(11,44,32,0.98),rgba(3,14,9,1));border-top:5px double #ffd95a;box-shadow:0 -8px 20px rgba(0,0,0,0.55);}
+  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;}
+  .nav-item .ic{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:21px;border:3px solid rgba(255,217,90,0.5);
+    background:linear-gradient(180deg,#1b5a42,#0e3626);box-shadow:0 3px 0 #04170f,inset 0 1px 0 rgba(255,255,255,0.25);}
+  .nav-item.active{color:var(--gold-bright);}
+  .nav-item.active .ic{border-color:#fff3b0;background:linear-gradient(180deg,#fff08a,#e8a912);box-shadow:0 0 0 2px #6e4604,0 3px 0 #6e4604,0 0 14px rgba(255,217,90,0.7);transform:translateY(-6px);}
+
+  .toast{position:fixed;bottom:112px;left:50%;transform:translateX(-50%) translateY(10px);background:linear-gradient(180deg,#1b5a42,#0e3626);border:3px solid #ffd95a;z-index:70;
+    padding:11px 18px;border-radius:14px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:90%;text-align:center;box-shadow:0 0 0 2px #4a3204,0 8px 18px rgba(0,0,0,0.5);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
+<span class="deco d1">♠</span><span class="deco d2">♥</span><span class="deco d3">♦</span><span class="deco d4">♣</span>
+
 <div class="app">
 
   <div class="hero">
+    <div class="fan">
+      <div class="pc a r">K<span>♥</span></div>
+      <div class="pc b">A<span>♠</span></div>
+      <div class="pc c r">Q<span>♦</span></div>
+    </div>
     <div class="brand">DURAK<span class="accent">.</span>UZ</div>
     <div class="tagline">Do'stlar bilan onlayn karta o'yini</div>
+    <div class="suits">♠ <i>♥</i> <i>♦</i> ♣</div>
   </div>
 
   <div id="home">
     <div class="box">
       <div class="stats">
-        <div class="stat"><div class="v" id="bal">...</div><div class="l">💰 Balans</div></div>
+        <div class="stat"><div class="v" id="bal">...</div><div class="l"><span class="coin"></span> Balans</div></div>
         <div class="stat"><div class="v" id="pts">...</div><div class="l">⭐ Ochko</div></div>
       </div>
       <div class="btn-row">
-        <button class="btn" onclick="claimDaily()">🎁 Kunlik +1000</button>
-        <button class="btn" onclick="invite()">👥 Do'st taklif +100</button>
+        <button class="btn gift" onclick="claimDaily()"><span class="badge">+1000</span>🎁 Kunlik bonus</button>
+        <button class="btn" onclick="invite()"><span class="badge">+100</span>👥 Do'st taklif</button>
       </div>
     </div>
 
-    <div class="cta-wrap" style="margin-top:16px">
+    <div class="cta-wrap" style="margin-top:22px">
       <button class="cta" onclick="openSetup('online')"><span>🎮</span> O'yinga qo'shilish</button>
       <div class="cta-sub">Tasodifiy raqib yoki do'stni taklif qiling</div>
     </div>
 
-    <div class="cta-wrap" style="margin-top:6px">
+    <div class="cta-wrap">
       <button class="cta friends" onclick="location.href='online.html'"><span>👥</span> Do'stlar bilan</button>
       <div class="cta-sub">Stol yarating va kodni do'stingizga yuboring</div>
     </div>
@@ -98,6 +203,14 @@
         <div class="level-btn locked" onclick="showToast('12-daraja yutib oching')">Qiyin<span class="stars">🔒 12-daraja</span></div>
       </div>
     </div>
+
+    <div class="tiles">
+      <div class="tile shop" onclick="location.href='shop.html'"><span class="ribbon">🔥 AKSIYA</span><span class="big"><span class="coin"></span></span>Do'kon</div>
+      <div class="tile inv" onclick="location.href='inventar.html'"><span class="big">🎒</span>Inventar</div>
+      <div class="tile top" onclick="show('rating')"><span class="big">🏆</span>Reyting</div>
+    </div>
+
+    <div class="promo">🎁 Har kuni kirib +1000 oling!<small>Do'stni taklif qiling — har biri uchun +100</small></div>
   </div>
 
   <div id="setup" class="hidden">
@@ -105,18 +218,18 @@
     <div class="box">
       <div class="title" id="setup-title">Stol sozlamalari</div>
 
-      <div class="title" style="margin-top:6px;color:var(--muted);font-weight:500">💰 Stavka</div>
-      <div class="chips" id="ch-stake"></div>
+      <div class="sub" style="margin-top:4px"><span class="coin"></span> Stavka</div>
+      <div class="chips" id="ch-stake" style="margin-top:8px"></div>
 
-      <div class="title" style="margin-top:16px;color:var(--muted);font-weight:500">🃏 Karta soni</div>
-      <div class="chips" id="ch-deck"></div>
+      <div class="sub">🃏 Karta soni</div>
+      <div class="chips" id="ch-deck" style="margin-top:8px"></div>
 
-      <div class="title" style="margin-top:16px;color:var(--muted);font-weight:500">👥 O'yinchilar soni</div>
-      <div class="chips" id="ch-players"></div>
+      <div class="sub">👥 O'yinchilar soni</div>
+      <div class="chips" id="ch-players" style="margin-top:8px"></div>
 
       <div class="sum" id="sum"></div>
     </div>
-    <div class="cta-wrap" style="margin-top:16px">
+    <div class="cta-wrap" style="margin-top:22px">
       <button class="cta" onclick="startTable()"><span>▶️</span> Boshlash</button>
     </div>
   </div>
@@ -125,7 +238,7 @@
     <div class="box">
       <div class="tabs">
         <div class="tab on" id="tab-points" onclick="loadTop('points')">⭐ Ochko</div>
-        <div class="tab" id="tab-balance" onclick="loadTop('balance')">💰 Valyuta</div>
+        <div class="tab" id="tab-balance" onclick="loadTop('balance')"><span class="coin"></span> Valyuta</div>
       </div>
       <div id="toplist"><div class="empty">Yuklanmoqda...</div></div>
     </div>
@@ -136,7 +249,7 @@
 <div class="bottom-nav">
   <div class="nav-item active" id="nav-home" onclick="show('home')"><span class="ic">🎮</span>O'yin</div>
   <div class="nav-item" id="nav-rating" onclick="show('rating')"><span class="ic">🏆</span>Reyting</div>
-  <div class="nav-item" onclick="location.href='shop.html'"><span class="ic">💰</span>Do'kon</div>
+  <div class="nav-item" onclick="location.href='shop.html'"><span class="ic" style="font-size:24px"><span class="coin"></span></span>Do'kon</div>
   <div class="nav-item" onclick="location.href='inventar.html'"><span class="ic">🎒</span>Inventar</div>
 </div>
 
@@ -150,6 +263,7 @@
 
   let myBal = 0;
   const cfg = {mode:'bot', stake:100, deck:36, players:2};
+  const COIN = '<span class="coin"></span>';
 
   function showToast(msg){
     const t = document.getElementById('toast');
@@ -233,6 +347,7 @@
     document.getElementById('nav-rating').classList.toggle('active', name==='rating');
     if (name==='rating') loadTop('points');
     if (name==='home') loadMe();
+    window.scrollTo(0,0);
   }
 
   function makeChips(boxId, values, key, label){
@@ -248,13 +363,13 @@
   }
 
   function renderSetup(){
-    makeChips('ch-stake', [100,1000,10000,50000,100000], 'stake', function(v){ return fmt(v); });
+    makeChips('ch-stake', [100,500,1000,5000,10000,50000,100000], 'stake', function(v){ return fmt(v); });
     makeChips('ch-deck', [24,36,54], 'deck', function(v){ return v + ' talik'; });
     makeChips('ch-players', [2,3,4,5,6], 'players');
     const pot = cfg.stake * cfg.players;
     document.getElementById('sum').innerHTML =
-      "Stavka: <b>" + fmt(cfg.stake) + "</b> · Umumiy bank: <b>" + fmt(pot) + "</b><br>" +
-      "Balansingiz: <b>" + fmt(myBal) + "</b>";
+      "Stavka: <b>" + fmt(cfg.stake) + "</b> " + COIN + " · Umumiy bank: <b>" + fmt(pot) + "</b> " + COIN + "<br>" +
+      "Balansingiz: <b>" + fmt(myBal) + "</b> " + COIN;
   }
 
   function openSetup(mode){
@@ -276,4 +391,4 @@
   loadMe();
 </script>
 </body>
-      </html>
+                                                             </html>
