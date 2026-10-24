@@ -263,6 +263,8 @@
 
   let myBal = 0;
   const cfg = {mode:'bot', stake:100, deck:36, players:2};
+  const LIMITS = {min:100, max:100000};
+  const PRESETS = [100,500,1000,5000,10000,50000,100000];
   const COIN = '<span class="coin"></span>';
 
   function showToast(msg){
@@ -299,6 +301,26 @@
       document.getElementById('pts').textContent = "—";
       showToast(r.error || "Xato");
     }
+  }
+
+  async function loadConfig(){
+    const r = await call("/api/config");
+    if (r && r.ok){
+      const lo = Number(r.min_stake), hi = Number(r.max_stake);
+      if (lo > 0 && hi >= lo){
+        LIMITS.min = lo;
+        LIMITS.max = hi;
+      }
+    }
+    if (cfg.stake < LIMITS.min || cfg.stake > LIMITS.max) cfg.stake = LIMITS.min;
+  }
+
+  function stakeList(){
+    const list = PRESETS.filter(function(v){ return v >= LIMITS.min && v <= LIMITS.max; });
+    if (list.indexOf(LIMITS.min) === -1) list.push(LIMITS.min);
+    if (list.indexOf(LIMITS.max) === -1) list.push(LIMITS.max);
+    list.sort(function(a,b){ return a-b; });
+    return list;
   }
 
   async function claimDaily(){
@@ -363,7 +385,7 @@
   }
 
   function renderSetup(){
-    makeChips('ch-stake', [100,500,1000,5000,10000,50000,100000], 'stake', function(v){ return fmt(v); });
+    makeChips('ch-stake', stakeList(), 'stake', function(v){ return fmt(v); });
     makeChips('ch-deck', [24,36,54], 'deck', function(v){ return v + ' talik'; });
     makeChips('ch-players', [2,3,4,5,6], 'players');
     const pot = cfg.stake * cfg.players;
@@ -378,6 +400,7 @@
       mode==='bot' ? '🤖 Botlarga qarshi — sozlamalar' : '🎮 Onlayn stol — sozlamalar';
     renderSetup();
     show('setup');
+    loadConfig().then(renderSetup);
   }
 
   function startTable(){
@@ -389,6 +412,7 @@
   }
 
   loadMe();
+  loadConfig();
 </script>
 </body>
-                                                             </html>
+  </html>
