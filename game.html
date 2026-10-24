@@ -95,8 +95,8 @@ async function loadMe(){
     const L=r.items||r.catalog||r.shop||me.items||[];
     const find=id=>Array.isArray(L)?L.find(x=>x&&x.id==id):(L&&L[id]);
     let a=me.avatar,b=me.bg;
-    const ia=find(a);if(ia)a=ia.emoji||ia.icon||ia.img||ia.image||ia.svg||ia.name||a;
-    const ib=find(b);if(ib)b=ib.css||ib.bg||ib.color||ib.gradient||ib.style||ib.value||b;
+    const ia=find(a);a=ia?ia.v:"";
+    const ib=find(b);b=ib?"linear-gradient(135deg,"+ib.v+")":"";
     const av=document.getElementById('mav');
     if(typeof a==='string'&&a){
       if(/^(https?:|data:)/.test(a)||/\.(png|jpe?g|gif|webp|svg)$/i.test(a))av.innerHTML='<img src="'+a+'">';
