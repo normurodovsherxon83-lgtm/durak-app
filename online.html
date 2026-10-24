@@ -189,6 +189,7 @@ const tg = window.Telegram.WebApp; tg.ready(); tg.expand();
 const API = "https://durak-bot-0stf.onrender.com";
 let code = null, S = null, timer = null, target = null, myAv = "", ITEMS = [], myPhoto = "", myUser = "";
 const COIN = '<span class="coin"></span>';
+const PRESETS = [100,500,1000,5000,10000,50000,100000];
 try{ const u=tg.initDataUnsafe.user||{}; myPhoto=u.photo_url||""; myUser=u.username||""; }catch(e){}
 
 function show(id){ ["menu","lobby","game"].forEach(x=>document.getElementById(x).classList.toggle("hide",x!==id)); }
@@ -221,6 +222,24 @@ async function call(path, extra){
     return await r.json();
   }catch(e){ return {ok:false,error:"Tarmoq xatosi"}; }
 }
+
+// Stavka tanlovini admin sozlamasidan olish
+async function loadConfig(){
+  try{
+    const r = await call("/api/config");
+    if(!r || !r.ok) return;
+    const lo = Number(r.min_stake), hi = Number(r.max_stake);
+    if(!(lo>0 && hi>=lo)) return;
+    let list = PRESETS.filter(v=>v>=lo && v<=hi);
+    if(list.indexOf(lo)===-1) list.push(lo);
+    if(list.indexOf(hi)===-1) list.push(hi);
+    list.sort((a,b)=>a-b);
+    const sel = document.getElementById("stake");
+    sel.innerHTML = list.map(v=>'<option value="'+v+'">Stavka: '+fmt(v)+'</option>').join("");
+    sel.value = String(lo);
+  }catch(e){}
+}
+loadConfig();
 
 // Tanlangan avatar va fon
 async function loadMe(){
