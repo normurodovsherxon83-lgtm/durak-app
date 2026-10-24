@@ -1,54 +1,218 @@
 <!DOCTYPE html><html lang="uz"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <title>Do'kon</title>
 <style>
-body{margin:0;background:#0f172a;color:#fff;font-family:sans-serif;padding:12px}
-.top{display:flex;justify-content:space-between;align-items:center;font-weight:bold;margin-bottom:10px}
-.back{padding:6px 10px;border:0;border-radius:8px;background:#1e293b;color:#fff}
-.tabs{display:flex;gap:6px;margin-bottom:10px}
-.tabs button{flex:1;padding:8px 2px;border:0;border-radius:8px;background:#1e293b;color:#fff}
-.tabs .on{background:#2563eb}
-.g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.c{background:#1e293b;border-radius:10px;padding:10px;text-align:center;border:1px solid #334155}
-.pv{height:50px;border-radius:8px;margin-bottom:6px;font-size:34px;line-height:50px}
-.c button{width:100%;padding:7px;border:0;border-radius:8px;background:#16a34a;color:#fff;margin-top:6px}
-.r-rare{border-color:#38bdf8}.r-legend{border-color:#fbbf24}
+:root{--gold-bright:#ffd95a;--cream:#fff7e0;--muted:#9bc2b0;
+  --goldgrad:linear-gradient(135deg,#fff6c9 0%,#ffd95a 22%,#b07d10 48%,#ffe58a 72%,#a8740c 100%);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;color:var(--cream);min-height:100vh;padding:16px 10px 40px;overflow-x:hidden;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><g fill='%23ffd95a' fill-opacity='0.09' font-size='28' font-family='Arial'><text x='10' y='36'>♠</text><text x='70' y='36' fill='%23ff6b6b'>♥</text><text x='40' y='96' fill='%23ff6b6b'>♦</text><text x='100' y='96'>♣</text></g></svg>"),
+    radial-gradient(ellipse at 50% -10%,#24916a 0%,rgba(36,145,106,0) 55%),
+    radial-gradient(ellipse at 50% 115%,#000 0%,rgba(0,0,0,0) 55%),
+    radial-gradient(circle at 0% 40%,rgba(255,217,90,0.14),rgba(255,217,90,0) 35%),
+    radial-gradient(circle at 100% 70%,rgba(224,49,58,0.16),rgba(224,49,58,0) 35%),
+    linear-gradient(180deg,#0f3a2a,#06180f);
+  background-attachment:fixed}
+body::after{content:"";position:fixed;inset:3px;border:7px double #ffd95a;border-radius:24px;pointer-events:none;z-index:50;
+  box-shadow:0 0 0 2px #5a3d05,inset 0 0 0 2px #5a3d05,inset 0 0 36px rgba(255,217,90,0.25),0 0 22px rgba(0,0,0,0.6)}
+.wrap{max-width:480px;margin:0 auto;padding:6px 8px}
+
+/* OLTIN TANGA */
+.coin{display:inline-block;position:relative;width:1.2em;height:1.2em;border-radius:50%;vertical-align:-0.22em;flex:none;
+  background:radial-gradient(circle at 32% 26%,#fffbe0 0%,#ffe27a 26%,#e8a912 60%,#8a5a05 100%);border:0.09em solid #b07d10;
+  box-shadow:inset 0 0 0 0.07em #ffd95a,inset 0 -0.14em 0.18em rgba(90,61,5,0.65),0 0.1em 0.2em rgba(0,0,0,0.55),0 0 0.5em rgba(255,217,90,0.5);
+  animation:cg 2.6s ease-in-out infinite}
+.coin::before{content:"D";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:0.66em;color:#8a5a05;text-shadow:0 0.06em 0 #fff3b0}
+.coin::after{content:"";position:absolute;top:12%;left:18%;width:30%;height:18%;border-radius:50%;background:rgba(255,255,255,0.75);transform:rotate(-30deg)}
+@keyframes cg{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25)}}
+
+/* USTKI PANEL */
+.top{display:flex;gap:8px;align-items:center;margin-bottom:16px}
+.back{padding:11px 12px;border:3px solid #ffd95a;border-radius:14px;color:var(--cream);font-weight:800;font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;
+  background:linear-gradient(180deg,#2f8d68,#1a6a4a);box-shadow:0 0 0 2px #4a3204,0 4px 0 #07301f}
+.back:active{transform:translateY(3px);box-shadow:0 0 0 2px #4a3204,0 1px 0 #07301f}
+.pill{flex:1;text-align:center;padding:10px 6px;border-radius:14px;font-weight:800;font-size:15px;color:var(--gold-bright);border:3px solid transparent;
+  background:linear-gradient(180deg,#0a241a,#13422f) padding-box,var(--goldgrad) border-box;box-shadow:inset 0 3px 8px rgba(0,0,0,0.55),0 3px 0 #4a3204;
+  text-shadow:0 2px 0 #5a3d05}
+.title{text-align:center;font-family:'Playfair Display',serif;font-weight:900;font-size:34px;letter-spacing:1px;margin-bottom:12px;
+  background:linear-gradient(180deg,#fff6c9 0%,#ffd95a 45%,#b07d10 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 3px 0 #5a3d05) drop-shadow(0 8px 10px rgba(0,0,0,0.6))}
+
+/* TABLAR */
+.tabs{display:flex;gap:7px;margin-bottom:14px}
+.tabs button{flex:1;padding:11px 2px;border-radius:13px;font-size:12px;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;color:var(--muted);
+  border:3px solid rgba(255,217,90,0.35);background:linear-gradient(180deg,#0a241a,#13422f);box-shadow:inset 0 3px 6px rgba(0,0,0,0.5)}
+.tabs button.on{color:#3a2a00;border-color:#fff3b0;background:linear-gradient(180deg,#fff08a,#e8a912);box-shadow:0 0 0 2px #6e4604,0 4px 0 #6e4604,inset 0 1px 0 rgba(255,255,255,0.7)}
+
+.ban{margin:0 0 16px;border-radius:16px;padding:12px;text-align:center;font-weight:800;font-size:13px;color:#3a2a00;border:4px solid #fff3b0;
+  background:linear-gradient(90deg,#ffd95a,#fff2a8,#ffd95a);box-shadow:0 0 0 2px #6e4604,0 5px 0 #6e4604,0 10px 14px rgba(0,0,0,0.5)}
+
+/* KARTOCHKALAR */
+.g{display:grid;grid-template-columns:1fr 1fr;gap:20px 12px}
+.g .c:last-child:nth-child(odd){grid-column:span 2}
+.c{position:relative;overflow:visible;border-radius:20px;padding:14px 8px 12px;text-align:center;border:5px solid transparent;
+  background:linear-gradient(180deg,#15573f,#082a1d) padding-box,var(--goldgrad) border-box;
+  box-shadow:0 0 0 2px #4a3204,0 12px 20px rgba(0,0,0,0.55),inset 0 0 22px rgba(255,217,90,0.12)}
+.c::before{content:"";position:absolute;inset:2px;border:1.5px solid rgba(255,217,90,0.5);border-radius:14px;pointer-events:none}
+.c.r-rare{background:linear-gradient(180deg,#15573f,#082a1d) padding-box,linear-gradient(135deg,#bfe9ff,#38bdf8,#1e6fb0,#bfe9ff) border-box}
+.c.r-epic{background:linear-gradient(180deg,#15573f,#082a1d) padding-box,linear-gradient(135deg,#ecd0ff,#b06bff,#6a28b8,#ecd0ff) border-box}
+.c.r-legend{background:linear-gradient(180deg,#15573f,#082a1d) padding-box,linear-gradient(135deg,#fff6c9,#ffb300,#ff6a00,#fff6c9) border-box;animation:lg 2s ease-in-out infinite}
+@keyframes lg{0%,100%{box-shadow:0 0 0 2px #4a3204,0 12px 20px rgba(0,0,0,0.55),0 0 10px rgba(255,179,0,0.4)}50%{box-shadow:0 0 0 2px #4a3204,0 12px 20px rgba(0,0,0,0.55),0 0 26px rgba(255,179,0,0.95)}}
+.pvbox{position:relative;height:122px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.c.big .pvbox{height:150px}
+.aura{position:absolute;width:92px;height:92px;border-radius:50%;filter:blur(16px);opacity:.55;
+  background:conic-gradient(from 0deg,#ff4f5a,#ffb347,#fff35a,#4fe38a,#4aa3ff,#b06bff,#ff4f5a);animation:spin 6s linear infinite}
+.c.big .aura{width:120px;height:120px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.chest{position:relative;width:118px;height:100px;filter:drop-shadow(0 8px 6px rgba(0,0,0,0.55))}
+.c.big .chest{width:150px;height:126px}
+.chest.rb{animation:hue 5s linear infinite}
+@keyframes hue{from{filter:drop-shadow(0 8px 6px rgba(0,0,0,0.55)) hue-rotate(0deg)}to{filter:drop-shadow(0 8px 6px rgba(0,0,0,0.55)) hue-rotate(360deg)}}
+.tw{animation:tw 1.6s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.1}50%{opacity:1}}
+.chest.bob{animation:bob 3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+.name{font-weight:800;font-size:16px;margin:2px 0 8px;text-shadow:0 2px 0 rgba(0,0,0,0.5)}
+.name .coin{font-size:18px}
+.c.big .name{font-size:20px}
+
+.av{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;border:4px solid #ffd95a;
+  background:radial-gradient(circle at 35% 30%,#2f8d68,#0a241a);box-shadow:0 0 0 2px #4a3204,0 6px 10px rgba(0,0,0,0.5),0 0 16px rgba(255,217,90,0.4);animation:bob 3s ease-in-out infinite}
+.bgp{width:100%;height:86px;border-radius:14px;border:3px solid #ffd95a;box-shadow:0 0 0 2px #4a3204,inset 0 0 18px rgba(0,0,0,0.35)}
+
+.c button{width:100%;padding:12px 6px;border-radius:14px;font-size:15px;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;color:#3a2a00;
+  border:3px solid #fff3b0;background:linear-gradient(180deg,#fff08a 0%,#ffc933 48%,#e09a0c 52%,#f6b81e 100%);text-shadow:0 1px 0 rgba(255,255,255,0.5);
+  box-shadow:0 0 0 2px #6e4604,0 5px 0 #6e4604,0 9px 12px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.8);position:relative;overflow:hidden}
+.c button:active{transform:translateY(4px);box-shadow:0 0 0 2px #6e4604,0 1px 0 #6e4604,inset 0 2px 0 rgba(255,255,255,0.8)}
+.c button.star{color:#fff;text-shadow:0 2px 0 rgba(0,0,0,0.5);border-color:#ffe58a;background:linear-gradient(180deg,#8a7bff,#4a3bc4);box-shadow:0 0 0 2px #4a3204,0 5px 0 #1f1670,0 9px 12px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.45)}
+.c button.on{color:var(--cream);text-shadow:0 2px 0 rgba(0,0,0,0.5);border-color:#ffd95a;background:linear-gradient(180deg,#3fae86,#146141);box-shadow:0 0 0 2px #4a3204,0 5px 0 #07301f,inset 0 2px 0 rgba(255,255,255,0.4)}
+.c button.eq{color:var(--cream);text-shadow:0 2px 0 rgba(0,0,0,0.5);border-color:#ffd95a;background:linear-gradient(180deg,#2f8d68,#1a6a4a);box-shadow:0 0 0 2px #4a3204,0 5px 0 #07301f,inset 0 2px 0 rgba(255,255,255,0.35)}
+.c button::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,0.6),transparent);transform:skewX(-20deg);animation:shine 3.2s infinite}
+@keyframes shine{0%{left:-60%}60%,100%{left:130%}}
+
+.rib{position:absolute;top:-16px;right:-8px;z-index:3;background:linear-gradient(180deg,#ff6b6b,#c4222c);color:#fff;font-size:12px;font-weight:800;padding:3px 10px;border-radius:12px;
+  border:2px solid #ffd95a;transform:rotate(6deg);text-shadow:0 1px 0 rgba(0,0,0,0.5);box-shadow:0 3px 0 #5e0d12}
+.rib.hit{left:-8px;right:auto;transform:rotate(-6deg);background:linear-gradient(180deg,#fff08a,#e8a912);color:#5a3d05;text-shadow:none;box-shadow:0 3px 0 #8a5a05}
+.empty{grid-column:span 2;text-align:center;color:var(--muted);padding:30px}
 </style></head><body>
-<div class="top"><button class="back" onclick="location.href='index.html'">← Orqaga</button><span id="bal"></span><span id="pts"></span></div>
-<div class="tabs" id="tabs"></div><div class="g" id="g"></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <radialGradient id="cg" cx="32%" cy="26%" r="80%"><stop offset="0" stop-color="#fffbe0"/><stop offset=".3" stop-color="#ffe27a"/><stop offset=".65" stop-color="#e8a912"/><stop offset="1" stop-color="#8a5a05"/></radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6c9"/><stop offset=".35" stop-color="#ffd95a"/><stop offset=".7" stop-color="#b07d10"/><stop offset="1" stop-color="#ffe58a"/></linearGradient>
+  <linearGradient id="b0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c0703a"/><stop offset="1" stop-color="#5a2d0c"/></linearGradient>
+  <linearGradient id="b1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6bb8ff"/><stop offset="1" stop-color="#16408a"/></linearGradient>
+  <linearGradient id="b2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c58bff"/><stop offset="1" stop-color="#53209a"/></linearGradient>
+  <linearGradient id="b3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7b7b"/><stop offset="1" stop-color="#9a1520"/></linearGradient>
+  <linearGradient id="b4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4f5a"/><stop offset=".2" stop-color="#ffb347"/><stop offset=".4" stop-color="#fff35a"/><stop offset=".6" stop-color="#4fe38a"/><stop offset=".8" stop-color="#4aa3ff"/><stop offset="1" stop-color="#b06bff"/></linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <div class="top"><button class="back" onclick="location.href='index.html'">← Orqaga</button><span class="pill" id="bal"></span><span class="pill" id="pts"></span></div>
+  <div class="title">DO'KON</div>
+  <div class="tabs" id="tabs"></div>
+  <div id="ban"></div>
+  <div class="g" id="g"><div class="empty">Yuklanmoqda...</div></div>
+</div>
+
 <script>
 const API="https://durak-bot-0stf.onrender.com/api/shop/",tg=Telegram.WebApp;
 tg.ready();tg.expand();tg.BackButton.show();tg.BackButton.onClick(()=>{location.href="index.html"});
 let D,tab="pack";
-const T={pack:"💰 Pul",av:"🧑 Avatar",bg:"🖼 Fon",chest:"🎁 Sandiq"};
+const COIN='<span class="coin"></span>';
+const T={pack:COIN+" Pul",av:"🧑 Avatar",bg:"🖼 Fon",chest:"🎁 Sandiq"};
+const fmt=n=>Math.floor(Number(n)||0).toLocaleString('en-US').replace(/,/g,' ');
 async function post(p,x={}){
   const r=await fetch(API+p,{method:"POST",headers:{"Content-Type":"application/json"},
   body:JSON.stringify({initData:tg.initData,...x})});return r.json()}
-const price=i=>i.c=="star"?"⭐"+i.p:i.p+" 💰";
-const card=(cls,pv,name,btn,fn)=>`<div class="c ${cls}">${pv}<div>${name}</div><button onclick="${fn}">${btn}</button></div>`;
+const price=i=>i.c=="star"?"⭐ "+fmt(i.p):fmt(i.p)+" "+COIN;
+
+/* ---------- SANDIQ VA TANGALAR (SVG) ---------- */
+function coin(x,y,r){return `<g><circle cx="${x}" cy="${y}" r="${r}" fill="url(#cg)" stroke="#8a5a05" stroke-width="1.2"/><circle cx="${x}" cy="${y}" r="${r*0.66}" fill="none" stroke="#b07d10" stroke-width="1"/><ellipse cx="${x-r*0.3}" cy="${y-r*0.35}" rx="${r*0.28}" ry="${r*0.16}" fill="#fffbe0" opacity=".85" transform="rotate(-30 ${x-r*0.3} ${y-r*0.35})"/></g>`}
+function gcoin(x,y){return `<g><ellipse cx="${x}" cy="${y+1.6}" rx="9" ry="4" fill="#8a5a05"/><ellipse cx="${x}" cy="${y}" rx="9" ry="4" fill="url(#cg)" stroke="#8a5a05" stroke-width="1"/></g>`}
+const HEAP=[
+  [[60,46],[48,48],[72,48]],
+  [[40,50],[80,50],[54,40],[66,40]],
+  [[60,34],[48,36],[72,36],[34,52],[86,52]],
+  [[60,24],[50,28],[70,28],[40,40],[80,40]],
+  [[60,14],[52,18],[68,18],[44,30],[76,30],[60,5]]
+];
+const GROUND=[
+  [[18,92]],
+  [[104,90]],
+  [[28,97],[96,97]],
+  [[10,84],[112,86]],
+  [[36,99],[84,99],[6,97],[116,97]]
+];
+function spark(x,y,d){return `<path class="tw" style="animation-delay:${d}s" d="M0-6 L1.6-1.6 L6 0 L1.6 1.6 L0 6 L-1.6 1.6 L-6 0 L-1.6-1.6Z" transform="translate(${x} ${y})" fill="#fff"/>`}
+function chestSVG(level,closed){
+  const L=Math.max(1,Math.min(5,level)),b="url(#b"+(L-1)+")";
+  let s=`<svg class="chest ${L==5?'rb':'bob'}" viewBox="0 0 120 104">`;
+  if(!closed){
+    s+=`<g transform="rotate(-10 60 42)"><rect x="22" y="22" width="76" height="26" rx="9" fill="${b}" stroke="#5a3d05" stroke-width="2"/><rect x="22" y="35" width="76" height="6" fill="url(#gold)"/></g>`;
+    for(let i=0;i<L;i++)HEAP[i].forEach(c=>{s+=coin(c[0],c[1],8)});
+  }
+  s+=`<rect x="20" y="50" width="80" height="42" rx="6" fill="${b}" stroke="#5a3d05" stroke-width="2"/>`;
+  s+=`<rect x="32" y="50" width="9" height="42" fill="url(#gold)" stroke="#8a5a05" stroke-width="1"/><rect x="79" y="50" width="9" height="42" fill="url(#gold)" stroke="#8a5a05" stroke-width="1"/>`;
+  s+=`<rect x="20" y="84" width="80" height="8" rx="3" fill="url(#gold)" stroke="#8a5a05" stroke-width="1"/>`;
+  if(closed){
+    s+=`<path d="M20 52 Q20 28 60 28 Q100 28 100 52 Z" fill="${b}" stroke="#5a3d05" stroke-width="2"/>`;
+    s+=`<rect x="32" y="30" width="9" height="22" fill="url(#gold)" stroke="#8a5a05" stroke-width="1"/><rect x="79" y="30" width="9" height="22" fill="url(#gold)" stroke="#8a5a05" stroke-width="1"/>`;
+    s+=`<rect x="17" y="48" width="86" height="8" rx="4" fill="url(#gold)" stroke="#8a5a05" stroke-width="1.2"/>`;
+  }else{
+    s+=`<rect x="17" y="46" width="86" height="10" rx="4" fill="url(#gold)" stroke="#8a5a05" stroke-width="1.2"/>`;
+  }
+  s+=`<circle cx="60" cy="68" r="9" fill="url(#gold)" stroke="#8a5a05" stroke-width="1.5"/><circle cx="60" cy="66" r="2.6" fill="#3a2a00"/><rect x="58.7" y="66" width="2.6" height="7" fill="#3a2a00"/>`;
+  if(!closed){
+    if(L>=2)s+=coin(38,50,7);
+    if(L>=3)s+=coin(86,51,7);
+    if(L>=4)s+=coin(60,53,7);
+    for(let i=0;i<L;i++)GROUND[i].forEach(c=>{s+=gcoin(c[0],c[1])});
+  }
+  s+=spark(18,24,0)+spark(104,30,.5)+spark(60,10,1)+spark(10,62,.8)+spark(112,64,1.2);
+  return s+`</svg>`;
+}
+const pvChest=(lv,closed)=>`<div class="pvbox"><div class="aura"></div>${chestSVG(lv,closed)}</div>`;
+
+/* ---------- KARTOCHKA ---------- */
+const card=(cls,badge,pv,name,btn,fn,bcls)=>`<div class="c ${cls}">${badge}${pv}<div class="name">${name}</div><button class="${bcls||''}" onclick="${fn}">${btn}</button></div>`;
+
 async function load(){D=await post("me");if(D.error)return tg.showAlert(D.error);draw()}
 function draw(){
-  document.getElementById("bal").textContent="💰 "+D.balance;
-  document.getElementById("pts").textContent="🏆 "+Math.floor(D.points);
+  document.getElementById("bal").innerHTML=COIN+" "+fmt(D.balance);
+  document.getElementById("pts").textContent="🏆 "+fmt(D.points);
   document.getElementById("tabs").innerHTML=Object.keys(T).map(k=>
     `<button class="${k==tab?"on":""}" onclick="tab='${k}';draw()">${T[k]}</button>`).join("");
+  document.getElementById("ban").innerHTML=tab=="pack"?`<div class="ban">🔥 Katta paket — katta chegirma! Sandiq to'la oltin 🔥</div>`:"";
   let h="";
-  if(tab=="pack")h=D.packs.map(p=>card("",'<div class="pv">💰</div>',p.coins+" pul","⭐"+p.stars,`stars('${p.id}')`)).join("");
-  else if(tab=="chest")h=D.chests.map(c=>card("",`<div class="pv">${c.e}</div>`,c.n+" sandiq",price(c),c.c=="star"?`stars('${c.id}')`:`chest('${c.id}')`)).join("");
+  if(tab=="pack"){
+    const n=D.packs.length,base=D.packs[0]?D.packs[0].stars/D.packs[0].coins:1;
+    h=D.packs.map((p,i)=>{
+      const lv=Math.min(5,Math.ceil((i+1)*5/n)),d=Math.round((1-(p.stars/p.coins)/base)*100);
+      const badge=d>=5?`<span class="rib">-${d}%</span>`:(i==2?`<span class="rib hit">🔥 HIT</span>`:"");
+      const big=(i==n-1&&n%2==1)?"big":"";
+      return card(big,badge,pvChest(lv,false),fmt(p.coins)+" "+COIN,"⭐ "+fmt(p.stars),`stars('${p.id}')`,"star")}).join("");
+  }
+  else if(tab=="chest")h=D.chests.map((c,i)=>
+    card((i==D.chests.length-1&&D.chests.length%2==1)?"big":"",`<span class="rib hit">${c.e}</span>`,pvChest(i%5+1,true),c.n+" sandiq",price(c),c.c=="star"?`stars('${c.id}')`:`chest('${c.id}')`,c.c=="star"?"star":"")).join("");
   else h=D.items.filter(i=>i.t==tab).map(i=>{
     const own=D.owned.includes(i.id),on=D[i.t=="av"?"avatar":"bg"]==i.id;
-    const pv=i.t=="av"?`<div class="pv">${i.v}</div>`:`<div class="pv" style="background:linear-gradient(135deg,${i.v})"></div>`;
-    return card("r-"+i.r,pv,i.n,own?(on?"✓ Tanlangan":"Tanlash"):price(i),
-      own?`equip('${i.id}')`:i.c=="star"?`stars('${i.id}')`:`buy('${i.id}')`)}).join("");
-  document.getElementById("g").innerHTML=h}
+    const pv=i.t=="av"?`<div class="pvbox"><div class="aura" style="width:70px;height:70px"></div><div class="av">${i.v}</div></div>`
+      :`<div class="pvbox" style="height:96px"><div class="bgp" style="background:linear-gradient(135deg,${i.v})"></div></div>`;
+    return card("r-"+i.r,"",pv,i.n,own?(on?"✓ Tanlangan":"Tanlash"):price(i),
+      own?`equip('${i.id}')`:i.c=="star"?`stars('${i.id}')`:`buy('${i.id}')`,own?(on?"on":"eq"):(i.c=="star"?"star":""))}).join("");
+  document.getElementById("g").innerHTML=h||'<div class="empty">Hozircha bo\'sh</div>'}
+
 async function act(p,id,ok){
   const r=await post(p,{id});
   if(r.error)return tg.showAlert(r.error);
   if(ok)tg.showAlert(ok(r));load()}
 const buy=id=>act("buy",id,()=>"✅ Sotib olindi!");
 const equip=id=>act("equip",id);
-const chest=id=>act("chest",id,r=>"🎁 +"+r.coins+" pul"+(r.item?"\n🎉 "+r.item:""));
+const chest=id=>act("chest",id,r=>"🎁 +"+fmt(r.coins)+" tanga"+(r.item?"\n🎉 "+r.item:""));
 async function stars(id){
   const r=await post("invoice",{id});
   if(r.error)return tg.showAlert(r.error);
