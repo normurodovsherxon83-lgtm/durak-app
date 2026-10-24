@@ -1,39 +1,135 @@
 <!DOCTYPE html>
 <html lang="uz"><head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Do'stlar bilan</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#1b6b4a,#0f3d2e 55%,#081c15) center/cover fixed;color:#fff;font-family:sans-serif;padding:12px;min-height:100vh;perspective:900px}
-h2{margin:6px 0 12px;text-shadow:0 2px 0 #7a5a00}
-button,select,input{font-size:16px;padding:12px;border-radius:10px;border:0;margin:4px 0;width:100%}
-button{background:linear-gradient(#ffd84a,#e0a800);color:#2b2205;font-weight:bold;box-shadow:0 4px 0 #8a6200,0 6px 10px #0008}
-button:active{transform:translateY(3px);box-shadow:0 1px 0 #8a6200}
-button.sec{background:linear-gradient(#3a8a6c,#1f5a45);color:#fff;box-shadow:0 4px 0 #0d3324,0 6px 10px #0008}
-.coin{display:inline-block;width:1em;height:1em;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3a0,#f5b301 45%,#a66a00);box-shadow:inset 0 -2px 3px #7a4a00,0 1px 3px #000a;vertical-align:-.15em}
-.box{background:linear-gradient(#17553b,#0d3324);border:3px solid #e6c34a;box-shadow:0 0 0 2px #7a5a00,0 8px 14px #000a,inset 0 0 12px #e6c34a33;border-radius:14px;padding:12px;margin-bottom:12px}
-.code{font-size:34px;letter-spacing:6px;text-align:center;font-weight:bold;color:#ffd84a;text-shadow:0 3px 0 #7a5a00}
-.row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.card{background:linear-gradient(160deg,#fff,#e9e4d4);color:#111;border-radius:8px;padding:10px 8px;min-width:46px;text-align:center;font-weight:bold;font-size:18px;box-shadow:0 4px 6px #0007,1px 1px 0 #bbb,2px 2px 0 #999;transition:transform .15s}
-.card.r{color:#c0212a}
-.card.sel{outline:3px solid #f5b301;transform:translateY(-8px)}
-#ghand .card:active{transform:translateY(-12px) scale(1.08)}
-.pair{display:flex;flex-direction:column;gap:2px}
-.pair .card:nth-child(2){margin-top:-18px;margin-left:14px;background:#e8f0ff}
-.felt{position:relative}
-.felt:before{content:"";position:absolute;inset:6px;border-radius:50%;background:radial-gradient(ellipse,#2a8a5e,#13503a 70%);box-shadow:inset 0 0 30px #0008;transform:rotateX(35deg);z-index:0}
-.felt>*{position:relative;z-index:1}
-.small{opacity:.85;font-size:14px;text-align:center}
-.hide{display:none}
-#msg{color:#ffd1d1;text-align:center;min-height:20px}
-.pl{display:flex;align-items:center;gap:8px;margin:4px 0}
-.av{width:38px;height:38px;border-radius:50%;background:#0d3324;border:2px solid #e6c34a;display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex:none}
-.av img{width:100%;height:100%;object-fit:cover}
-#mav{animation:fl 2.4s ease-in-out infinite}
-@keyframes fl{50%{transform:translateY(-3px)}}
+:root{--gold-bright:#ffd95a;--cream:#fff7e0;--muted:#9bc2b0;
+  --goldgrad:linear-gradient(135deg,#fff6c9 0%,#ffd95a 22%,#b07d10 48%,#ffe58a 72%,#a8740c 100%);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;color:var(--cream);min-height:100vh;padding:14px 8px 40px;overflow-x:hidden;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><g fill='%23ffd95a' fill-opacity='0.09' font-size='28' font-family='Arial'><text x='10' y='36'>♠</text><text x='70' y='36' fill='%23ff6b6b'>♥</text><text x='40' y='96' fill='%23ff6b6b'>♦</text><text x='100' y='96'>♣</text></g></svg>"),
+    radial-gradient(ellipse at 50% -10%,#24916a 0%,rgba(36,145,106,0) 55%),
+    radial-gradient(ellipse at 50% 115%,#000 0%,rgba(0,0,0,0) 55%),
+    radial-gradient(circle at 0% 40%,rgba(255,217,90,0.14),rgba(255,217,90,0) 35%),
+    radial-gradient(circle at 100% 70%,rgba(224,49,58,0.16),rgba(224,49,58,0) 35%),
+    linear-gradient(180deg,#0f3a2a,#06180f);
+  background-attachment:fixed}
+body::after{content:"";position:fixed;inset:3px;border:7px double #ffd95a;border-radius:24px;pointer-events:none;z-index:50;
+  box-shadow:0 0 0 2px #5a3d05,inset 0 0 0 2px #5a3d05,inset 0 0 36px rgba(255,217,90,0.25),0 0 22px rgba(0,0,0,0.6)}
+.wrap{max-width:480px;margin:0 auto;padding:6px 8px}
+h2{font-family:'Playfair Display',serif;font-weight:900;font-size:28px;text-align:center;margin:6px 0 14px;
+  background:linear-gradient(180deg,#fff6c9 0%,#ffd95a 45%,#b07d10 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 3px 0 #5a3d05) drop-shadow(0 8px 10px rgba(0,0,0,0.6))}
+
+.coin{display:inline-block;position:relative;width:1.2em;height:1.2em;border-radius:50%;vertical-align:-0.22em;flex:none;
+  background:radial-gradient(circle at 32% 26%,#fffbe0 0%,#ffe27a 26%,#e8a912 60%,#8a5a05 100%);border:0.09em solid #b07d10;
+  box-shadow:inset 0 0 0 0.07em #ffd95a,inset 0 -0.14em 0.18em rgba(90,61,5,0.65),0 0.1em 0.2em rgba(0,0,0,0.55),0 0 0.5em rgba(255,217,90,0.5);
+  animation:cg 2.6s ease-in-out infinite}
+.coin::before{content:"D";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:900;font-size:0.66em;color:#8a5a05;text-shadow:0 0.06em 0 #fff3b0}
+.coin::after{content:"";position:absolute;top:12%;left:18%;width:30%;height:18%;border-radius:50%;background:rgba(255,255,255,0.75);transform:rotate(-30deg)}
+@keyframes cg{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25)}}
+
+.box{position:relative;border-radius:20px;padding:14px 12px;margin-bottom:16px;border:5px solid transparent;
+  background:linear-gradient(180deg,#15573f,#082a1d) padding-box,var(--goldgrad) border-box;
+  box-shadow:0 0 0 2px #4a3204,0 12px 20px rgba(0,0,0,0.55),inset 0 0 22px rgba(255,217,90,0.12)}
+.box::before{content:"";position:absolute;inset:2px;border:1.5px solid rgba(255,217,90,0.5);border-radius:14px;pointer-events:none}
+.small{opacity:.9;font-size:13px;text-align:center;font-weight:600}
+.hide{display:none!important}
+#msg{color:#ffd1d1;text-align:center;min-height:20px;font-weight:700;position:relative;z-index:60}
+
+select,input{width:100%;font-size:16px;font-weight:700;padding:13px;border-radius:14px;margin:5px 0;color:var(--cream);font-family:'Inter',sans-serif;
+  border:3px solid #ffd95a;background:linear-gradient(180deg,#0a241a,#13422f);box-shadow:0 0 0 2px #4a3204,inset 0 3px 8px rgba(0,0,0,0.55)}
+select option{color:#111}
+button{width:100%;padding:15px 8px;border-radius:16px;font-size:16px;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;color:#3a2a00;margin:5px 0;
+  border:3px solid #fff3b0;background:linear-gradient(180deg,#fff08a 0%,#ffc933 48%,#e09a0c 52%,#f6b81e 100%);text-shadow:0 1px 0 rgba(255,255,255,0.5);
+  box-shadow:0 0 0 2px #6e4604,0 6px 0 #6e4604,0 10px 14px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.8)}
+button:active{transform:translateY(5px);box-shadow:0 0 0 2px #6e4604,0 1px 0 #6e4604,inset 0 2px 0 rgba(255,255,255,0.8)}
+button.sec{color:var(--cream);text-shadow:0 2px 0 rgba(0,0,0,0.5);border-color:#ffd95a;background:linear-gradient(180deg,#3fae86,#146141);
+  box-shadow:0 0 0 2px #4a3204,0 6px 0 #07301f,0 10px 14px rgba(0,0,0,0.5),inset 0 2px 0 rgba(255,255,255,0.4)}
+button.sec:active{box-shadow:0 0 0 2px #4a3204,0 1px 0 #07301f}
+.row{display:flex;gap:10px}
+.row button{flex:1}
+
+.code{font-family:'Playfair Display',serif;font-size:42px;letter-spacing:8px;text-align:center;font-weight:900;color:var(--gold-bright);text-shadow:0 3px 0 #5a3d05,0 0 18px rgba(255,217,90,.5);margin:6px 0}
+
+/* O'YINCHI AVATARI */
+.pav{position:relative;width:60px;height:60px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;
+  border:4px solid #ffd95a;background:radial-gradient(circle at 35% 30%,#2f8d68,#0a241a);box-shadow:0 0 0 2px #4a3204,0 6px 10px rgba(0,0,0,0.55),0 0 14px rgba(255,217,90,.35);
+  animation:bob 3s ease-in-out infinite}
+.pav .im{position:absolute;inset:0;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.pav img{width:100%;height:100%;object-fit:cover}
+.pav .bd{position:absolute;right:-8px;bottom:-6px;width:28px;height:28px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;
+  background:#0a241a;border:2px solid #ffd95a;box-shadow:0 2px 4px #000a}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.pav.big{width:72px;height:72px;font-size:38px}
+
+/* KUTISH XONASI */
+.slot{display:flex;align-items:center;gap:12px;padding:10px;margin:8px 0;border-radius:16px;border:3px solid rgba(255,217,90,.6);
+  background:linear-gradient(180deg,#0f4a34,#082a1d);box-shadow:inset 0 0 14px rgba(0,0,0,.45),0 4px 8px rgba(0,0,0,.4)}
+.slot.empty{opacity:.5;border-style:dashed}
+.slot .nm{font-weight:800;font-size:16px;text-shadow:0 2px 0 rgba(0,0,0,.5)}
+.slot .un{font-size:12px;color:var(--muted);font-weight:600}
+.crown{color:var(--gold-bright);font-size:12px;font-weight:800;letter-spacing:1px}
+
+/* O'YIN */
+.hud{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hud .stk b{display:block;font-size:18px;color:var(--gold-bright);text-shadow:0 2px 0 #5a3d05}
+.hud .stk small{font-size:10px;letter-spacing:1px;color:var(--muted);font-weight:700}
+.deck{position:relative;width:74px;height:70px}
+.deck .pk{position:absolute;left:24px;top:2px}
+.deck .pk+.pk{left:27px;top:0}
+.deck .tr{position:absolute;left:0;top:10px;transform:rotate(-16deg)}
+.deck .n{position:absolute;right:-4px;bottom:-6px;z-index:5;min-width:26px;height:26px;border-radius:13px;background:#0a241a;border:2px solid #ffd95a;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;color:var(--gold-bright)}
+
+.pc{position:relative;width:60px;height:88px;border-radius:9px;color:#111;background:linear-gradient(160deg,#fff 0%,#f1ecda 60%,#d9d2b8 100%);
+  border:1.5px solid #9a8f6a;box-shadow:0 5px 8px rgba(0,0,0,.55),1px 1px 0 #bdb48f,2px 2px 0 #a39a78;flex:none;transition:transform .15s}
+.pc.r{color:#c0212a}
+.pc b{position:absolute;left:6px;top:4px;font-size:18px;line-height:1;font-weight:900;font-family:'Playfair Display',serif}
+.pc .s{position:absolute;left:6px;top:23px;font-size:14px;line-height:1}
+.pc i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:36px;padding-top:14px}
+.pc.sm{width:46px;height:68px}.pc.sm b{font-size:14px}.pc.sm .s{top:18px;font-size:11px}.pc.sm i{font-size:26px;padding-top:10px}
+.pc.sel{outline:3px solid #4fe38a;transform:translateY(-10px);box-shadow:0 0 18px rgba(79,227,138,.8),0 5px 8px rgba(0,0,0,.55)}
+.bk{border-radius:7px;border:2px solid #ffd95a;flex:none;
+  background:repeating-linear-gradient(45deg,#c92a33 0 5px,#8e1519 5px 10px);box-shadow:0 3px 5px rgba(0,0,0,.6),inset 0 0 0 2px #7a1519}
+.bk.s1{width:30px;height:44px}.bk.s2{width:42px;height:60px}
+
+.opps{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:14px}
+.opp{position:relative;flex:1 1 140px;border-radius:18px;padding:10px 8px 12px;text-align:center;border:4px solid transparent;
+  background:linear-gradient(180deg,#15573f,#082a1d) padding-box,var(--goldgrad) border-box;box-shadow:0 0 0 2px #4a3204,0 10px 16px rgba(0,0,0,.55)}
+.opp.def{background:linear-gradient(180deg,#15573f,#082a1d) padding-box,linear-gradient(135deg,#bfe9ff,#38bdf8,#1e6fb0,#bfe9ff) border-box}
+.opp.atk{background:linear-gradient(180deg,#15573f,#082a1d) padding-box,linear-gradient(135deg,#fff6c9,#ffb300,#ff6a00,#fff6c9) border-box;box-shadow:0 0 0 2px #4a3204,0 0 20px rgba(255,150,0,.6)}
+.opp .top{display:flex;align-items:center;gap:10px;text-align:left;margin-bottom:10px}
+.opp .nm{font-weight:800;font-size:14px;line-height:1.2;word-break:break-word}
+.opp .un{font-size:11px;color:var(--muted);font-weight:600}
+.opp .role{font-size:11px;font-weight:800;color:var(--gold-bright)}
+.fan{display:flex;justify-content:center;align-items:center;min-height:50px;padding-left:20px}
+.fan .bk{margin-left:-20px}
+.fan .more{margin-left:6px;font-weight:800;color:var(--gold-bright);font-size:14px}
+
+.tablewrap{position:relative;min-height:290px;perspective:700px;margin:6px 0 14px}
+.felt{position:absolute;inset:8px 0;border-radius:50%;border:6px solid #ffd95a;transform:rotateX(38deg);
+  background:radial-gradient(ellipse,#35a06f 0%,#1a6a4a 55%,#0d3a29 100%);
+  box-shadow:0 0 0 3px #5a3d05,0 22px 26px rgba(0,0,0,.75),inset 0 0 40px rgba(0,0,0,.6),inset 0 0 0 3px rgba(255,217,90,.4)}
+.tcards{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:12px 10px;justify-content:center;align-content:center;min-height:290px;padding:30px 24px}
+.pair{position:relative;width:78px;height:104px}
+.pair .pc{position:absolute;left:0;top:0}
+.pair .pc.d{left:20px;top:16px;box-shadow:-4px 5px 8px rgba(0,0,0,.6)}
+.hint{position:absolute;z-index:1;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;color:rgba(255,247,224,.75);font-size:15px;padding:0 50px;text-shadow:0 2px 3px #000}
+
+.turn{text-align:center;font-weight:800;color:var(--gold-bright);text-shadow:0 2px 0 #5a3d05;margin-bottom:6px;font-size:15px}
+.hand{display:flex;flex-wrap:wrap;justify-content:center;padding:14px 4px 4px;row-gap:6px}
+.hand .pc{margin-left:-18px}
+.hand .pc:first-child{margin-left:0}
+.hand .pc:active{transform:translateY(-16px) scale(1.06)}
+.me{display:flex;align-items:center;gap:12px;justify-content:center;margin-top:10px}
+.me .nm{font-weight:800;font-size:15px}
+.me .un{font-size:11px;color:var(--muted)}
 </style></head><body>
+<div class="wrap">
 <div id="msg"></div>
 
 <div id="menu">
@@ -67,39 +163,56 @@ button.sec{background:linear-gradient(#3a8a6c,#1f5a45);color:#fff;box-shadow:0 4
     <div class="small" id="linfo"></div>
     <button onclick="shareCode()">📤 Do'stga yuborish</button>
   </div>
-  <div class="box"><div id="lplayers"></div></div>
+  <div class="box" id="lplayers"></div>
   <button id="startbtn" class="hide" onclick="startGame()">▶️ Boshlash</button>
   <button class="sec" onclick="leaveTable()">❌ Chiqish</button>
 </div>
 
 <div id="game" class="hide">
-  <div class="box small" id="ginfo"></div>
-  <div class="box felt"><div class="small">Stol</div><div class="row" id="gtable"></div></div>
-  <div class="box"><div class="small" id="gturn"></div><div class="row" id="ghand"></div></div>
-  <div class="row">
+  <div class="box"><div class="hud" id="ginfo"></div></div>
+  <div class="opps" id="gopps"></div>
+  <div class="tablewrap"><div class="felt"></div><div class="hint" id="ghint"></div><div class="tcards" id="gtable"></div></div>
+  <div class="turn" id="gturn"></div>
+  <div class="hand" id="ghand"></div>
+  <div class="me" id="gme"></div>
+  <div class="row" style="margin-top:14px">
     <button id="takebtn" class="sec hide" onclick="doAct('take')">🤚 Olaman</button>
     <button id="endbtn" class="sec hide" onclick="doAct('end')">✅ Bito</button>
   </div>
-  <div id="gresult" class="box hide"></div>
+  <div id="gresult" class="box hide" style="margin-top:16px;text-align:center;line-height:1.8"></div>
   <button id="exitbtn" class="sec hide" onclick="location.reload()">🏠 Menyu</button>
+</div>
 </div>
 
 <script>
 const tg = window.Telegram.WebApp; tg.ready(); tg.expand();
 const API = "https://durak-bot-0stf.onrender.com";
-let code = null, S = null, timer = null, target = null, myAv = "🙂";
-const COIN = '<i class="coin"></i>';
+let code = null, S = null, timer = null, target = null, myAv = "", ITEMS = [], myPhoto = "", myUser = "";
+const COIN = '<span class="coin"></span>';
+try{ const u=tg.initDataUnsafe.user||{}; myPhoto=u.photo_url||""; myUser=u.username||""; }catch(e){}
 
 function show(id){ ["menu","lobby","game"].forEach(x=>document.getElementById(x).classList.toggle("hide",x!==id)); }
 function msg(t){ document.getElementById("msg").textContent=t||""; if(t) setTimeout(()=>{document.getElementById("msg").textContent=""},3000); }
 function cs(c){ return Array.isArray(c)?c.join(""):String(c); }
-function red(c){ const s=cs(c); return s.indexOf("♥")>-1||s.indexOf("♦")>-1; }
 function fmt(n){ return Math.floor(n).toLocaleString('en-US').replace(/,/g,' '); }
-function avHtml(a){
-  if(typeof a==='string'&&(/^(https?:|data:)/.test(a)||/\.(png|jpe?g|gif|webp|svg)$/i.test(a))) return '<img src="'+a+'">';
-  if(typeof a==='string'&&a.trim().startsWith('<svg')) return a;
-  return a||"🙂";
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function rs(c){ const s=cs(c); return {rank:s.slice(0,-1), suit:s.slice(-1), red:/[♥♦]/.test(s)}; }
+function cardHtml(c,extra){ const x=rs(c); return '<div class="pc '+(x.red?'r ':'')+(extra||'')+'"><b>'+esc(x.rank)+'</b><span class="s">'+x.suit+'</span><i>'+x.suit+'</i></div>'; }
+function backs(n,cls,max){ max=max||10; let h=''; for(let k=0;k<Math.min(n,max);k++) h+='<div class="bk '+cls+'"></div>'; if(n>max) h+='<span class="more">+'+(n-max)+'</span>'; return h; }
+
+function itemV(id){ const it=ITEMS.find(x=>x&&x.id==id); return it?it.v:""; }
+// avatar: Telegram rasmi -> do'kon avatari -> bosh harf
+function avHtml(p,i,big){
+  const isMe = i===S.me;
+  const photo = isMe ? myPhoto : (p.photo||p.photo_url||"");
+  let shopAv = isMe ? myAv : (p.avatar?(itemV(p.avatar)||""):"");
+  const letter = esc((p.name||"?").trim().charAt(0).toUpperCase());
+  let inner, badge="";
+  if(photo){ inner='<img src="'+esc(photo)+'" onerror="this.remove()">'; if(shopAv) badge='<div class="bd">'+shopAv+'</div>'; }
+  else inner = shopAv || letter;
+  return '<div class="pav'+(big?' big':'')+'"><div class="im">'+inner+'</div>'+badge+'</div>';
 }
+function unameOf(p,i){ const u = i===S.me ? myUser : (p.username||""); return u?'@'+esc(u):''; }
 
 async function call(path, extra){
   try{
@@ -113,15 +226,10 @@ async function call(path, extra){
 async function loadMe(){
   try{
     const r = await call("/api/shop/me");
-    const me = r.me||r.player||r;
-    const L = r.items||r.catalog||r.shop||me.items||[];
-    const find = id => Array.isArray(L)?L.find(x=>x&&x.id==id):(L&&L[id]);
-    let a = me.avatar, b = me.bg;
-    const ia = find(a); a = ia ? ia.v : "";
-    const ib = find(b); b = ib ? "linear-gradient(135deg,"+ib.v+")" : "";
-    if(typeof a==='string'&&a) myAv = a;
-    if(typeof b==='string'&&/^(#|rgb|hsl|linear|radial|conic|url)/.test(b))
-      document.body.style.background = b+(b.startsWith('url')?' center/cover fixed':'');
+    ITEMS = r.items||[];
+    const ia = ITEMS.find(x=>x.id==r.avatar); myAv = ia?ia.v:"";
+    const ib = ITEMS.find(x=>x.id==r.bg);
+    if(ib) document.body.style.background = "linear-gradient(135deg,"+ib.v+") center/cover fixed";
     if(S) render();
   }catch(e){}
 }
@@ -175,34 +283,46 @@ function render(){
     show("lobby");
     lcode.textContent = S.code;
     linfo.innerHTML = "Stavka: "+COIN+" "+fmt(S.stake)+" | "+S.size+" talik | "+S.players.length+"/"+S.max_players;
-    lplayers.innerHTML = S.players.map((p,i)=>'<div class="pl"><div class="av"'+(i===S.me?' id="mav"':'')+'>'+(i===S.me?avHtml(myAv):"👤")+'</div>'+p.name+(i===0?" (egasi)":"")+'</div>').join("");
+    let h = S.players.map((p,i)=>'<div class="slot">'+avHtml(p,i,true)+'<div><div class="nm">'+esc(p.name)+(i===S.me?' (siz)':'')+'</div><div class="un">'+unameOf(p,i)+'</div>'+(i===0?'<div class="crown">👑 EGASI</div>':'')+'</div></div>').join("");
+    for(let k=S.players.length;k<S.max_players;k++) h += '<div class="slot empty"><div class="pav big" style="animation:none">?</div><div class="nm">Kutilmoqda...</div></div>';
+    lplayers.innerHTML = h;
     startbtn.classList.toggle("hide", !(S.me===0 && S.players.length>=2));
     return;
   }
   show("game");
-  const me = S.me;
-  const names = S.players.map((p,i)=>p.name+" ("+S.counts[i]+")").join(" · ");
-  ginfo.innerHTML = '<div class="pl" style="justify-content:center"><div class="av" id="mav">'+avHtml(myAv)+'</div></div>'
-    +"Kozir: <b>"+cs(S.trump_card||S.trump)+"</b> | Kolodada: "+S.deck_count+"<br>"+names;
-  const amDef = me===S.defender;
+  const me = S.me, amDef = me===S.defender, tbl = S.table||[];
+  const tc = S.trump_card||S.trump;
+  ginfo.innerHTML =
+    '<div class="stk"><small>STAVKA</small><b>'+COIN+' '+fmt(S.stake)+'</b></div>'+
+    '<div style="text-align:center"><small style="font-size:10px;letter-spacing:1px;color:#9bc2b0;font-weight:700">KOZIR</small>'+
+      '<div style="display:flex;justify-content:center">'+cardHtml(tc,'sm')+'</div></div>'+
+    '<div class="deck">'+(S.deck_count>0?'<div class="tr">'+cardHtml(tc,'sm')+'</div><div class="bk s2 pk"></div><div class="bk s2 pk"></div>':'')+'<div class="n">'+S.deck_count+'</div></div>';
+
+  gopps.innerHTML = S.players.map((p,i)=>{
+    if(i===me) return "";
+    const cls = i===S.defender?" def":(i===S.attacker?" atk":"");
+    const role = i===S.defender?"🛡 Himoyada":(i===S.attacker?"⚔ Hujumda":"");
+    return '<div class="opp'+cls+'"><div class="top">'+avHtml(p,i)+'<div><div class="nm">'+esc(p.name)+'</div><div class="un">'+unameOf(p,i)+'</div><div class="role">'+role+'</div></div></div>'+
+      '<div class="fan">'+backs(S.counts[i],"s1",12)+'</div></div>';
+  }).join("");
+
   gturn.textContent = S.status==="done" ? "O'yin tugadi"
-    : amDef ? "Siz himoyadasiz" : (me===S.attacker ? "Siz hujumdasiz" : "Qo'shib tashlashingiz mumkin");
+    : amDef ? "🛡 Siz himoyadasiz" : (me===S.attacker ? "⚔ Siz hujumdasiz" : "Qo'shib tashlashingiz mumkin");
+  ghint.textContent = tbl.length?"":"Stol bo'sh";
   gtable.innerHTML = "";
-  (S.table||[]).forEach(pr=>{
+  tbl.forEach(pr=>{
     const d = document.createElement("div"); d.className="pair";
-    const a = document.createElement("div"); a.className="card"+(red(pr[0])?" r":"")+(target&&cs(target)===cs(pr[0])?" sel":""); a.textContent=cs(pr[0]);
-    if(amDef && pr[1]==null) a.onclick=()=>{target=pr[0];render();};
-    d.appendChild(a);
-    if(pr[1]!=null){ const b=document.createElement("div"); b.className="card"+(red(pr[1])?" r":""); b.textContent=cs(pr[1]); d.appendChild(b); }
+    d.innerHTML = cardHtml(pr[0], (target&&cs(target)===cs(pr[0]))?"sel":"") + (pr[1]!=null?cardHtml(pr[1],"d"):"");
+    if(amDef && pr[1]==null) d.firstChild.onclick=()=>{target=pr[0];render();};
     gtable.appendChild(d);
   });
   ghand.innerHTML = "";
   (S.hand||[]).forEach(c=>{
-    const el = document.createElement("div"); el.className="card"+(red(c)?" r":""); el.textContent=cs(c);
+    const w = document.createElement("div"); w.innerHTML = cardHtml(c); const el = w.firstChild;
     el.onclick=()=>{
       if(S.status!=="playing") return;
       if(amDef){
-        const open=(S.table||[]).filter(p=>p[1]==null).map(p=>p[0]);
+        const open=tbl.filter(p=>p[1]==null).map(p=>p[0]);
         const t = target || open[0];
         if(!t) return msg("Urish uchun karta yo'q");
         doAct("defend", c, t);
@@ -210,15 +330,17 @@ function render(){
     };
     ghand.appendChild(el);
   });
+  const mp = S.players[me];
+  gme.innerHTML = avHtml(mp,me)+'<div><div class="nm">'+esc(mp.name)+'</div><div class="un">'+unameOf(mp,me)+'</div></div>';
   const playing = S.status==="playing";
-  takebtn.classList.toggle("hide", !(playing && amDef && (S.table||[]).length));
-  endbtn.classList.toggle("hide", !(playing && !amDef && (S.table||[]).length));
+  takebtn.classList.toggle("hide", !(playing && amDef && tbl.length));
+  endbtn.classList.toggle("hide", !(playing && !amDef && tbl.length));
   if(S.status==="done" && S.result){
     clearInterval(timer);
     const r=S.result;
     gresult.classList.remove("hide");
-    gresult.innerHTML = "🃏 Durak: <b>"+S.players[r.durak].name+"</b><br>"+
-      S.players.map((p,i)=>p.name+": balans "+Math.round(r.balances[i]*100)/100+", ochko +"+Math.round(r.points[i]*100)/100).join("<br>");
+    gresult.innerHTML = "🃏 Durak: <b>"+esc(S.players[r.durak].name)+"</b><br>"+
+      S.players.map((p,i)=>esc(p.name)+": "+COIN+" "+Math.round(r.balances[i]*100)/100+", ochko +"+Math.round(r.points[i]*100)/100).join("<br>");
     exitbtn.classList.remove("hide");
   }
 }
