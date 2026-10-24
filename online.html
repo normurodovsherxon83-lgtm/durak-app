@@ -27,7 +27,15 @@ button.sec{background:#2d6a54;color:#fff}
 <div id="menu">
   <h2>👥 Do'stlar bilan o'ynash</h2>
   <div class="box">
-    <select id="stake"><option>10</option><option>20</option><option>50</option><option>100</option></select>
+    <select id="stake">
+      <option value="100" selected>💰 Stavka: 100</option>
+      <option value="500">💰 Stavka: 500</option>
+      <option value="1000">💰 Stavka: 1 000</option>
+      <option value="5000">💰 Stavka: 5 000</option>
+      <option value="10000">💰 Stavka: 10 000</option>
+      <option value="50000">💰 Stavka: 50 000</option>
+      <option value="100000">💰 Stavka: 100 000</option>
+    </select>
     <select id="size"><option value="24">24 talik</option><option value="36" selected>36 talik</option><option value="54">54 talik</option></select>
     <select id="maxp"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
     <button onclick="createTable()">➕ Stol yaratish</button>
@@ -72,6 +80,7 @@ let code = null, S = null, timer = null, target = null;
 function show(id){ ["menu","lobby","game"].forEach(x=>document.getElementById(x).classList.toggle("hide",x!==id)); }
 function msg(t){ document.getElementById("msg").textContent=t||""; if(t) setTimeout(()=>{document.getElementById("msg").textContent=""},3000); }
 function cs(c){ return Array.isArray(c)?c.join(""):String(c); }
+function fmt(n){ return Math.floor(n).toLocaleString('en-US').replace(/,/g,' '); }
 
 async function call(path, extra){
   try{
@@ -128,7 +137,7 @@ function render(){
   if(S.status==="waiting"){
     show("lobby");
     lcode.textContent = S.code;
-    linfo.textContent = "Stavka: "+S.stake+" | "+S.size+" talik | "+S.players.length+"/"+S.max_players;
+    linfo.textContent = "Stavka: "+fmt(S.stake)+" | "+S.size+" talik | "+S.players.length+"/"+S.max_players;
     lplayers.innerHTML = S.players.map((p,i)=>"👤 "+p.name+(i===0?" (egasi)":"")).join("<br>");
     startbtn.classList.toggle("hide", !(S.me===0 && S.players.length>=2));
     return;
